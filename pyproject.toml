@@ -1,13 +1,17 @@
 [tool.poetry]
 name = "useshortcut"
-version = "0.1.0"
+version = "0.0.1"
 description = ""
 authors = ["Ivan Willig <iwillig@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
+requests = "^2.32.3"
 
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core"]

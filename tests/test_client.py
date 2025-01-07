@@ -1,4 +1,4 @@
-from useshortcut import APIClient
+from useshortcut.client import APIClient
 from useshortcut.models import Story, StoryInput
 import requests
 import os

@@ -81,6 +81,27 @@ def test_client():
         for category in categories:
             print('categories', category.id, category.name)
 
+        current_member = client.get_current_member()
+        print('current-member', current_member)
+        search_query = f"owner:{current_member.mention_name}"
+        print('search-query', search_query)
+
+        search_params = models.SearchInputs(
+            query=search_query,
+        )
+
+        stories = client.search_stories(search_params)
+        print(search_params)
+
+        print('stories-count', len(stories.data))
+        print('stories', stories)
+
+        for story in stories.data:
+            print(story.name)
+
+        # for ivans_story in ivans_stories:
+        #     print('ivans_story', ivans_story.id, ivans_story.name)
+        #
         story = client.create_story(
            models.StoryInput(name="Test Story",
                        workflow_state_id=workflow.default_state_id),

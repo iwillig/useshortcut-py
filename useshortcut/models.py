@@ -74,6 +74,7 @@ class Story:
     external_links: Optional[List[Dict[str, Any]]] = None
 
     group_mention_ids: Optional[List[int]] = None
+    comment_ids: Optional[List[int]] = None
     follower_ids: Optional[List[int]] = None
     owner_ids: Optional[List[int]] = None
 
@@ -82,12 +83,19 @@ class Story:
     mention_ids: Optional[List[int]] = None
     member_mention_ids: Optional[List[int]] = None
     label_ids: Optional[List[int]] = None
+    task_ids: Optional[List[int]] = None
+    file_ids: Optional[List[int]] = None
 
     linked_files: Optional[List[Dict[str, Any]]] = None
+    linked_file_ids: Optional[List[int]] = None
 
     custom_fields: Optional[List[Dict[str, Any]]] = None
+    num_tasks_completed: Optional[int] = None
 
     stats: Optional[Dict[str, Any]] = None
+    lead_time: Optional[int] = None
+    cycle_time: Optional[int] = None
+
     entity_type: str = "story"
 
     @classmethod
@@ -406,17 +414,17 @@ class Profile:
 @dataclass
 class Member:
     id: str
-    global_id: str
 
-
-    role: str
-    disabled: bool
-    profile: Profile
-    created_at: datetime
-    updated_at: datetime
-    state: str
+    state: Optional[str] = None
     entity_type: str = "member"
+    global_id: Optional[str] = None
+    profile: Optional[Profile] = None
+    role: Optional[str] = None
+    disabled: Optional[bool] = None
+    mention_name: Optional[str] = None
 
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Member":
 
@@ -548,5 +556,20 @@ class Repository:
     def from_json(cls, data: Dict[str, Any]) -> "Repository":
         return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
+@dataclass
+class SearchInputs:
+    query: any
+    detail: str = "slim"
+    page_size: int = 25
 
+@dataclass
+class SearchStoryResult:
+    data: List[Story]
+    total: int
+    next: Optional[str] = None
 
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "SearchStoryResult":
+        if 'data' in data:
+            data['data'] = [Story.from_json(x) for x in data['data']]
+        return cls(**data)

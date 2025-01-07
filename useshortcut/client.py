@@ -47,6 +47,15 @@ class APIClient:
         response.raise_for_status()
         return response.json() if response.content else response
 
+    def get_current_member(self):
+        return models.Member.from_json(self._make_request("GET", "/member"))
+
+    def search(self, params: models.SearchInputs):
+        return self._make_request("GET", "/search", params=params.__dict__)
+
+    def search_stories(self, params: models.SearchInputs):
+        return models.SearchStoryResult.from_json(
+            self._make_request("GET", "/search/stories", params=params.__dict__))
 
     def create_story(self, story: models.StoryInput) -> models.Story:
         """Create a new story.

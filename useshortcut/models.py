@@ -1,4 +1,3 @@
-from calendar import day_abbr
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass, field
 from datetime import datetime

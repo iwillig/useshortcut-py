@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "useshortcut"
 version = "0.0.1"
-description = ""
+description = "A rest client for the Shortcut REST API"
 authors = ["Ivan Willig <iwillig@gmail.com>"]
 readme = "README.md"
 
@@ -16,3 +16,7 @@ pytest = "^8.3.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[project.urls]
+Homepage = "https://github.com/iwillig/useshortcut-py"
+Issues = "https://github.com/iwillig/useshortcut-py/issues"

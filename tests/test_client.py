@@ -102,9 +102,11 @@ def test_client():
         # for ivans_story in ivans_stories:
         #     print('ivans_story', ivans_story.id, ivans_story.name)
         #
+
         story = client.create_story(
-           models.StoryInput(name="Test Story",
-                       workflow_state_id=workflow.default_state_id),
+           models.StoryInput(
+               name="Test Story",
+               workflow_state_id=workflow.default_state_id),
         )
 
         print("new", story)

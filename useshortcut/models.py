@@ -149,6 +149,13 @@ class Epic:
     def from_json(cls, data: Dict[str, Any]) -> "Epic":
         return cls(**data)
 
+@dataclass
+class EpicWorkflow:
+    id: int
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "EpicWorkflow":
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
 @dataclass
 class CreateIterationInput:
@@ -189,3 +196,357 @@ class Iteration:
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Iteration":
         return cls(**data)
+
+
+@dataclass
+class StoryLinkInput:
+    object_id: int
+    subject_id: int
+    verb: str
+
+@dataclass
+class StoryLink:
+    id: int
+    object_id: int
+    subject_id: int
+    verb: str
+    entity_type: str = "story-link"
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "StoryLink":
+        return cls(**data)
+
+@dataclass
+class CreateGroupInput:
+    name: str
+    mention_name: str
+
+@dataclass
+class UpdateGroupInput:
+    name: Optional[str]
+
+@dataclass
+class Group:
+    id: int
+    global_id: str
+
+    name: str
+    entity_type: str = "group"
+
+    mention_name: Optional[str] = None
+    description: Optional[str] = None
+    archived: Optional[bool] = None
+    app_url: Optional[str] = None
+    color: Optional[str] = None
+    color_key: Optional[str] = None
+    display_icon: Optional[Any] = None
+
+    member_ids: Optional[List[str]] = None
+    num_stories_started: Optional[int] = None
+    num_stories: Optional[int] = None
+    num_epics_started: Optional[int] = None
+    num_stories_backlog: Optional[int] = None
+    workflow_ids: Optional[List[int]] = None
+
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Group":
+        return cls(**data)
+
+
+@dataclass
+class KeyResultValue:
+    boolean_value: bool
+    numeric_value: str
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "KeyResultValue":
+        return cls(**data)
+
+@dataclass
+class KeyResultInput:
+    name: Optional[str] = None
+
+    initial_observed_value: Optional[KeyResultValue] = None
+    observed_value: Optional[KeyResultValue] = None
+    target_value: Optional[KeyResultValue] = None
+
+
+@dataclass
+class KeyResult:
+    id: int
+    name: str
+    current_observed_value: KeyResultValue
+    current_target_value: KeyResultValue
+    entity_type: str = "key"
+    progress: Optional[int] = None
+    objective_id: Optional[int] = None
+    initial_observed_value: Optional[int] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "KeyResult":
+        return cls(**data)
+
+@dataclass
+class CreateLabelInput:
+    name: str
+    color: Optional[str]
+    description: Optional[str]
+    external_id: Optional[str]
+
+
+@dataclass
+class Label:
+    id: int
+    name: str
+    global_id: str
+    external_id: Optional[str]
+    app_url: Optional[str] = None
+    archived: bool = False
+    color: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    description: Optional[str] = None
+    entity_type: str = "label"
+    stats: Any = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Label":
+        return cls(**data)
+
+@dataclass
+class CreateLinkedFilesInput:
+    name: str
+    type: str ## enum
+    url: str
+
+@dataclass
+class UpdatedLinkedFilesInput:
+    name: Optional[str]
+    type: Optional[str]
+    url: Optional[str]
+    uploader_id: Optional[str]
+
+
+@dataclass
+class LinkedFiles:
+    id: int
+    global_id: str
+    name: Optional[str]
+
+    content_type: Optional[str]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    description: Optional[str] = None
+    entity_type: str = "linked-file"
+
+    group_mention_ids: Optional[List[str]] = None
+    member_mention_ids: Optional[List[str]] = None
+    mention_ids: Optional[List[str]] = None
+
+
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "LinkedFiles":
+        return cls(**data)
+
+@dataclass
+class CreateFileInput:
+    name: str
+
+
+@dataclass
+class File:
+    id: int
+    name: str
+    content_type: str
+    created_at: datetime
+    updated_at: datetime
+    description: str
+    uploader_id: str
+    url: str
+    size: int
+    external_id: Optional[str]
+    filename: str
+    entity_type: str = "file"
+    group_mention_ids: Optional[List[str]] = None
+    member_mention_ids: Optional[List[str]] = None
+    mention_ids: Optional[List[str]] = None
+    story_link_id: Optional[int] = None
+    story_ids: Optional[List[int]] = None
+    thumbnail_url: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "File":
+        return cls(**data)
+
+@dataclass
+class Profile:
+    id: str
+    name: str
+    mention_name: str
+    gravatar_hash: str
+    is_owner: bool
+    email_address: str
+    deactivated: bool
+
+    display_icon: Any
+
+    entity_type: str = "profile"
+    two_factor_auth_activated: Optional[bool] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Profile":
+        return cls(**data)
+
+@dataclass
+class Member:
+    id: str
+    global_id: str
+
+
+    role: str
+    disabled: bool
+    profile: Profile
+    created_at: datetime
+    updated_at: datetime
+    state: str
+    entity_type: str = "member"
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Member":
+
+        if 'profile' in data:
+            data['profile'] = Profile.from_json(data['profile'])
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
+@dataclass
+class CreateObjectiveInput:
+    name: str
+
+@dataclass
+class UpdateObjectiveInput:
+    name: Optional[str]
+
+@dataclass
+class Objective:
+    id: int
+    global_id: str
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Objective":
+        return  cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
+@dataclass
+class Repository:
+    id: int
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Repository":
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
+@dataclass
+class WorkflowState:
+    id: int
+    global_id: str
+    name: str
+    description: str
+    verb: str
+    num_stories: int
+    num_story_templates: int
+    position: int
+    type: str ## Enum
+    created_at: datetime
+    updated_at: datetime
+    entity_type: str = "workflow-state"
+    color: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "WorkflowState":
+        return cls(**data)
+
+@dataclass
+class Workflow:
+    id: int
+    name: str
+    description: str
+    entity_type: str = "workflow"
+
+
+    auto_assign_owner: Optional[bool] = None
+    project_ids: Optional[List[int]] = None
+
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    default_state_id: Optional[int] = None
+
+    states: List[WorkflowState] = field(default_factory=list)
+
+    team_id: Optional[int] = None
+
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Workflow":
+        if 'states' in data:
+            data['states'] = [WorkflowState.from_json(x) for x in data['states']]
+        return cls(**data)
+
+@dataclass
+class CreateCategoryInput:
+    name: str
+
+@dataclass
+class UpdateCategoryInput:
+    name: Optional[str]
+
+@dataclass
+class Category:
+    id: int
+    global_id: str
+    type: str
+    archived: bool
+    color: str
+    created_at: datetime
+    updated_at: datetime
+    name: str
+
+    external_id: Optional[str] = None
+    entity_type: str = "category"
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Category":
+        return cls(**data)
+
+@dataclass
+class CreateProjectInput:
+    name: str
+
+@dataclass
+class UpdateProjectInput:
+    name: Optional[str]
+
+@dataclass
+class Project:
+    id: int
+    name: str
+    created_at: datetime
+    updated_at: datetime
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Project":
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
+@dataclass
+class Repository:
+    id: int
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Repository":
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
+
+

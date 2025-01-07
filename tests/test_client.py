@@ -1,5 +1,6 @@
 from useshortcut.client import APIClient
-from useshortcut.models import Story, StoryInput
+from useshortcut.models import (StoryInput, CreateCategoryInput)
+import useshortcut.models as models
 import requests
 import os
 
@@ -8,30 +9,81 @@ def test_client():
     client = APIClient(api_token=os.environ.get("SHORTCUT_API_TOKEN"))
 
     ## assert client.list_workflows() is None
+    workflows = client.list_workflows()
 
-    # for workflow in client.list_workflows():
-    #     print(workflow["name"], workflow["id"])
+    for workflow in workflows:
+         print(workflow.name,
+               workflow.id,
+               workflow.default_state_id)
 
-    workflow = client.get_workflow("1488")
+    workflow = client.get_workflow(workflows[-1].id)
 
     ##print(workflow)
     ##print(workflow.keys())
 
-    # for state in workflow["states"]:
-    #     print(state["id"])
+    for state in workflow.states:
+         print(state.id)
 
     try:
         epics = client.list_epics()
 
         for epic in epics:
-            print("epic", epic.id, epic.name)
+            #print("epic", epic.id, epic.name)
+            pass
 
         iterations = client.list_iterations()
         for iteration in iterations:
-            print("iteration", iteration.id, iteration.name)
+            #print("iteration", iteration.id, iteration.name)
+            pass
+
+        groups = client.list_groups()
+        for group in groups:
+            ##print("group", group.id, group.name)
+            pass
+
+        labels = client.list_labels()
+        for label in labels:
+            ##print("labels", label.id)
+            pass
+
+        linked_files = client.list_linked_file()
+        print('linked-files-count', len(linked_files))
+
+        for linked_file in linked_files:
+            print('linked-files', linked_file.id)
+
+        files = client.list_files()
+        print('files-count', len(files))
+        for file in files:
+            print('files', file.id)
+
+        members = client.list_members()
+        for member in members:
+            print('members', member.profile.name)
+
+        objectives = client.list_objectives()
+        print('objectives-count', len(objectives))
+        for objective in objectives:
+            print('objectives', objective.id)
+
+        projects = client.list_projects()
+        print('project-count', len(projects))
+        for project in projects:
+            print('projects', project.id, project.name)
+
+        epic_workflow = client.get_epic_workflow()
+        print('epic-workflow', epic_workflow)
+
+        # client.create_category(models.CreateCategoryInput(name="test"))
+
+        categories = client.list_categories()
+        print('categories-count', len(categories))
+        for category in categories:
+            print('categories', category.id, category.name)
 
         story = client.create_story(
-            StoryInput(name="Test Story", workflow_state_id=500104846),
+           models.StoryInput(name="Test Story",
+                       workflow_state_id=workflow.default_state_id),
         )
 
         print("new", story)

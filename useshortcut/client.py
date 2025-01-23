@@ -1,7 +1,5 @@
-from dataclasses import asdict
 from typing import Optional, Dict, Any, List, Union
 import requests
-import json
 import useshortcut.models as models
 
 JSON = Union[Dict[str, Any], List[Dict[str, Any]]]
@@ -9,7 +7,7 @@ JSON = Union[Dict[str, Any], List[Dict[str, Any]]]
 
 class APIClient:
     """Client for interacting with the Shortcut API v3."""
-    BASE_URL = "https://api.app.shortcut-staging.com/api/v3"
+    BASE_URL = "https://api.app.shortcut.com/api/v3"
 
     def __init__(self, api_token: str, base_url: Optional[str] = None) -> None:
 

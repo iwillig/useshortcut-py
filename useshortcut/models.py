@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 
+
 @dataclass
 class Label:
     id: int
@@ -23,12 +24,13 @@ class StoryInput:
     name: str
     workflow_state_id: int
 
-## TODO, Should these values have a default value when they are optional?
+
+# TODO: Should these values have a default value when they are optional?
 @dataclass
 class Story:
 
     name: str
-    id: Optional[int] = None  ### This does not exist when you create a story.
+    id: Optional[int] = None  # This does not exist when you create a story.
     global_id: Optional[str] = None
     external_id: Optional[str] = None
 
@@ -101,9 +103,11 @@ class Story:
     def from_json(cls, data: Dict[str, Any]) -> "Story":
         return cls(**data)
 
+
 @dataclass
 class EpicInput:
     name: str
+
 
 @dataclass
 class Epic:
@@ -113,7 +117,7 @@ class Epic:
 
     archived: Optional[bool] = None
     description: Optional[str] = None
-    state: str = "to do" ## enum value
+    state: str = "to do"  # enum value
     group_id: str = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -156,6 +160,7 @@ class Epic:
     def from_json(cls, data: Dict[str, Any]) -> "Epic":
         return cls(**data)
 
+
 @dataclass
 class EpicWorkflow:
     id: int
@@ -164,15 +169,18 @@ class EpicWorkflow:
     def from_json(cls, data: Dict[str, Any]) -> "EpicWorkflow":
         return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
+
 @dataclass
 class CreateIterationInput:
     name: str
     start_date: str
     end_date: str
 
+
 @dataclass
 class UpdateIterationInput:
     name: Optional[str]
+
 
 @dataclass
 class Iteration:
@@ -181,7 +189,7 @@ class Iteration:
     global_id: str
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    status: str = "unstarted" ### enum
+    status: str = "unstarted"  # enum
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -211,6 +219,7 @@ class StoryLinkInput:
     subject_id: int
     verb: str
 
+
 @dataclass
 class StoryLink:
     id: int
@@ -225,14 +234,17 @@ class StoryLink:
     def from_json(cls, data: Dict[str, Any]) -> "StoryLink":
         return cls(**data)
 
+
 @dataclass
 class CreateGroupInput:
     name: str
     mention_name: str
 
+
 @dataclass
 class UpdateGroupInput:
     name: Optional[str]
+
 
 @dataclass
 class Group:
@@ -274,6 +286,7 @@ class KeyResultValue:
     def from_json(cls, data: Dict[str, Any]) -> "KeyResultValue":
         return cls(**data)
 
+
 @dataclass
 class KeyResultInput:
     name: Optional[str] = None
@@ -297,6 +310,7 @@ class KeyResult:
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "KeyResult":
         return cls(**data)
+
 
 @dataclass
 class CreateLabelInput:
@@ -325,11 +339,13 @@ class Label:
     def from_json(cls, data: Dict[str, Any]) -> "Label":
         return cls(**data)
 
+
 @dataclass
 class CreateLinkedFilesInput:
     name: str
-    type: str ## enum
+    type: str  # enum
     url: str
+
 
 @dataclass
 class UpdatedLinkedFilesInput:
@@ -355,11 +371,10 @@ class LinkedFiles:
     member_mention_ids: Optional[List[str]] = None
     mention_ids: Optional[List[str]] = None
 
-
-
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "LinkedFiles":
         return cls(**data)
+
 
 @dataclass
 class CreateFileInput:
@@ -391,6 +406,7 @@ class File:
     def from_json(cls, data: Dict[str, Any]) -> "File":
         return cls(**data)
 
+
 @dataclass
 class Profile:
     id: str
@@ -410,6 +426,7 @@ class Profile:
     def from_json(cls, data: Dict[str, Any]) -> "Profile":
         return cls(**data)
 
+
 @dataclass
 class Member:
     id: str
@@ -424,20 +441,24 @@ class Member:
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Member":
 
-        if 'profile' in data:
-            data['profile'] = Profile.from_json(data['profile'])
+        if "profile" in data:
+            data["profile"] = Profile.from_json(data["profile"])
         return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
 
 @dataclass
 class CreateObjectiveInput:
     name: str
 
+
 @dataclass
 class UpdateObjectiveInput:
     name: Optional[str]
+
 
 @dataclass
 class Objective:
@@ -446,7 +467,8 @@ class Objective:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Objective":
-        return  cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
 
 @dataclass
 class Repository:
@@ -455,6 +477,7 @@ class Repository:
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Repository":
         return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+
 
 @dataclass
 class WorkflowState:
@@ -466,7 +489,7 @@ class WorkflowState:
     num_stories: int
     num_story_templates: int
     position: int
-    type: str ## Enum
+    type: str  # Enum
     created_at: datetime
     updated_at: datetime
     entity_type: str = "workflow-state"
@@ -476,13 +499,13 @@ class WorkflowState:
     def from_json(cls, data: Dict[str, Any]) -> "WorkflowState":
         return cls(**data)
 
+
 @dataclass
 class Workflow:
     id: int
     name: str
     description: str
     entity_type: str = "workflow"
-
 
     auto_assign_owner: Optional[bool] = None
     project_ids: Optional[List[int]] = None
@@ -496,20 +519,22 @@ class Workflow:
 
     team_id: Optional[int] = None
 
-
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Workflow":
-        if 'states' in data:
-            data['states'] = [WorkflowState.from_json(x) for x in data['states']]
+        if "states" in data:
+            data["states"] = [WorkflowState.from_json(x) for x in data["states"]]
         return cls(**data)
+
 
 @dataclass
 class CreateCategoryInput:
     name: str
 
+
 @dataclass
 class UpdateCategoryInput:
     name: Optional[str]
+
 
 @dataclass
 class Category:
@@ -529,13 +554,16 @@ class Category:
     def from_json(cls, data: Dict[str, Any]) -> "Category":
         return cls(**data)
 
+
 @dataclass
 class CreateProjectInput:
     name: str
 
+
 @dataclass
 class UpdateProjectInput:
     name: Optional[str]
+
 
 @dataclass
 class Project:
@@ -548,18 +576,13 @@ class Project:
     def from_json(cls, data: Dict[str, Any]) -> "Project":
         return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
-@dataclass
-class Repository:
-    id: int
-    @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Repository":
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
 @dataclass
 class SearchInputs:
-    query: any
+    query: Any
     detail: str = "slim"
     page_size: int = 25
+
 
 @dataclass
 class SearchStoryResult:
@@ -569,6 +592,6 @@ class SearchStoryResult:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "SearchStoryResult":
-        if 'data' in data:
-            data['data'] = [Story.from_json(x) for x in data['data']]
+        if "data" in data:
+            data["data"] = [Story.from_json(x) for x in data["data"]]
         return cls(**data)

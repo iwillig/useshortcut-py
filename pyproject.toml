@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "useshortcut"
 version = "0.0.1"
-description = "A rest client for the Shortcut REST API"
+description = "A REST client for the Shortcut REST API"
 authors = ["Ivan Willig <iwillig@gmail.com>", "Chris Demwell <cdemwell@gmail.com>"]
 readme = "README.md"
 
@@ -13,6 +13,7 @@ click = "^8.1.8"
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
 pytest = "^8.3.4"
+invoke = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core"]

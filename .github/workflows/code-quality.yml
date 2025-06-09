@@ -1,0 +1,52 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pipenv
+      
+      - name: Cache pipenv virtualenv
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-quality-${{ hashFiles('**/Pipfile') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-quality-
+      
+      - name: Install dependencies
+        run: |
+          pipenv install --dev --python 3.11
+      
+      - name: Check code formatting
+        run: |
+          pipenv run black --check .
+      
+      - name: Run tests with coverage
+        run: |
+          pipenv run pytest --cov=useshortcut --cov-report=term --cov-report=xml
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false

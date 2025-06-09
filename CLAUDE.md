@@ -60,6 +60,18 @@ pipenv run invoke test
 
 This runs pytest through Pipenv.
 
+## Building the Package
+The project uses setuptools for building distributions. All package metadata is defined in `pyproject.toml` following PEP 517/518 standards.
+
+To build the package:
+```bash
+python -m build
+```
+
+This will create both wheel and source distributions in the `dist/` directory.
+
+Note: The project was migrated from Poetry to use standard setuptools with Pipenv for dependency management.
+
 ## Dependencies
 - Python 3.x
 - requests - HTTP client

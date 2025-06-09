@@ -1,0 +1,134 @@
+name: Publish to PyPI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check.outputs.should_publish }}
+      version: ${{ steps.check.outputs.version }}
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all tags
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Check if version changed
+        id: check
+        run: |
+          # Extract version from setup.py
+          CURRENT_VERSION=$(python -c "import re; content = open('setup.py').read(); match = re.search(r'version=\"([^\"]+)\"', content); print(match.group(1) if match else '0.0.0')")
+          echo "Current version: $CURRENT_VERSION"
+          
+          # Check if this version tag already exists
+          if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
+            echo "Version v$CURRENT_VERSION already exists as a tag"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version v$CURRENT_VERSION is new"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+  test:
+    needs: check-version
+    if: needs.check-version.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pipenv
+          pipenv install --dev
+      
+      - name: Run tests
+        run: |
+          pipenv run pytest -v
+      
+      - name: Check formatting
+        run: |
+          pipenv run black --check .
+
+  build-and-publish:
+    needs: [check-version, test]
+    if: needs.check-version.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/useshortcut
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+      contents: write  # For creating tags
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+      
+      - name: Build package
+        run: |
+          python -m build
+          twine check dist/*
+      
+      - name: Create and push tag
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
+      
+      - name: Publish to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+        continue-on-error: true  # Don't fail if test publish fails
+      
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check-version.outputs.version }}
+          name: Release ${{ needs.check-version.outputs.version }}
+          body: |
+            ## Changes in this release
+            
+            Package has been published to PyPI: https://pypi.org/project/useshortcut/${{ needs.check-version.outputs.version }}/
+            
+            Install with:
+            ```bash
+            pip install useshortcut==${{ needs.check-version.outputs.version }}
+            ```
+          generate_release_notes: true
+          files: dist/*

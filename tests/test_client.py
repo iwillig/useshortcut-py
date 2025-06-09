@@ -8,45 +8,38 @@ import os
 def test_client():
     client = APIClient(api_token=os.environ.get("SHORTCUT_API_TOKEN"))
 
-    ## assert client.list_workflows() is None
     workflows = client.list_workflows()
 
     for workflow in workflows:
-         print(workflow.name,
-               workflow.id,
-               workflow.default_state_id)
+        print(workflow.name,
+              workflow.id,
+              workflow.default_state_id)
 
     workflow = client.get_workflow(workflows[-1].id)
 
-    ##print(workflow)
-    ##print(workflow.keys())
 
     for state in workflow.states:
-         print(state.id)
+        print(state.id)
 
     try:
         epics = client.list_epics()
 
         for epic in epics:
-            #print("epic", epic.id, epic.name)
             pass
 
         iterations = client.list_iterations()
         for iteration in iterations:
-            #print("iteration", iteration.id, iteration.name)
             pass
 
         groups = client.list_groups()
         for group in groups:
-            ##print("group", group.id, group.name)
             pass
 
         labels = client.list_labels()
         for label in labels:
-            ##print("labels", label.id)
             pass
 
-        linked_files = client.list_linked_file()
+        linked_files = client.list_linked_files()
         print('linked-files-count', len(linked_files))
 
         for linked_file in linked_files:
@@ -99,9 +92,6 @@ def test_client():
         for story in stories.data:
             print(story.name)
 
-        # for ivans_story in ivans_stories:
-        #     print('ivans_story', ivans_story.id, ivans_story.name)
-        #
 
         story = client.create_story(
            models.StoryInput(
@@ -117,5 +107,3 @@ def test_client():
         print(e)
         print(e.response.json())
 
-    assert client is None
-    assert {} is None

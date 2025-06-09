@@ -40,7 +40,7 @@ class APIClient:
         Raises:
                 requests.exceptions.RequestException: If the request fails
         """
-        url = f"{self.BASE_URL}/{path.lstrip('/')}"
+        url = f"{self.base_url}/{path.lstrip('/')}"
         response = self.session.request(method, url, **kwargs)
         response.raise_for_status()
         return response.json() if response.content else response
@@ -87,8 +87,8 @@ class APIClient:
         data = self._make_request("PUT", f"/stories/{story_id}", json=story.__dict__)
         return models.Story.from_json(data)
 
-    ### This delete method returns the response, helpful for debugging.
-    ### It also accepts the story model object instead of an ID. TODO Revist this.
+    # This delete method returns the response, helpful for debugging.
+    # It also accepts the story model object instead of an ID. TODO: Revisit this.
     def delete_story(self, story: models.Story) -> Any:
         """Delete a story.
         Args:
@@ -222,7 +222,7 @@ class APIClient:
         Returns
             Story Link object
         """
-        data = self._make_request("POST", "/stories", json=params.__dict__)
+        data = self._make_request("POST", "/story-links", json=params.__dict__)
         return [models.StoryLink.from_json(story_link) for story_link in data]
 
     def get_story_link(self, story_link_id: int) -> models.StoryLink:
@@ -314,7 +314,7 @@ class APIClient:
         Returns:
             KeyResult object
         """
-        data = self._make_request("GET", f"/key-result/{key_result_id}")
+        data = self._make_request("GET", f"/key-results/{key_result_id}")
         return models.KeyResult.from_json(data)
 
     def update_key_result(self, key_result_id: int, params: models.KeyResultInput) -> models.KeyResult:
@@ -327,7 +327,7 @@ class APIClient:
             KeyResult object
         """
         data = self._make_request("PUT",
-                                  f"/key-result/{key_result_id}",
+                                  f"/key-results/{key_result_id}",
                                   json=params.__dict__)
         return models.KeyResult.from_json(data)
 
@@ -375,7 +375,7 @@ class APIClient:
         self._make_request("DELETE", f"/labels/{label_id}")
 
     ## Linked Files
-    def list_linked_file(self) -> List[models.LinkedFiles]:
+    def list_linked_files(self) -> List[models.LinkedFiles]:
         """
         List all linked files.
         Returns:
@@ -551,6 +551,6 @@ class APIClient:
         return models.Category.from_json(data)
 
     def delete_category(self, category_id: int) -> None:
-       self._make_request("DELETE", f"/categories/{category_id}")
+        self._make_request("DELETE", f"/categories/{category_id}")
 
     ## Custom Fields

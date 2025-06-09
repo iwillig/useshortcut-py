@@ -23,12 +23,12 @@ class StoryInput:
     name: str
     workflow_state_id: int
 
-## TODO, Should these values have a default value when they are optional?
+# TODO: Should these values have a default value when they are optional?
 @dataclass
 class Story:
 
     name: str
-    id: Optional[int] = None  ### This does not exist when you create a story.
+    id: Optional[int] = None  # This does not exist when you create a story.
     global_id: Optional[str] = None
     external_id: Optional[str] = None
 
@@ -113,7 +113,7 @@ class Epic:
 
     archived: Optional[bool] = None
     description: Optional[str] = None
-    state: str = "to do" ## enum value
+    state: str = "to do"  # enum value
     group_id: str = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -181,7 +181,7 @@ class Iteration:
     global_id: str
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    status: str = "unstarted" ### enum
+    status: str = "unstarted"  # enum
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -328,7 +328,7 @@ class Label:
 @dataclass
 class CreateLinkedFilesInput:
     name: str
-    type: str ## enum
+    type: str  # enum
     url: str
 
 @dataclass
@@ -446,7 +446,7 @@ class Objective:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Objective":
-        return  cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
 @dataclass
 class Repository:
@@ -466,7 +466,7 @@ class WorkflowState:
     num_stories: int
     num_story_templates: int
     position: int
-    type: str ## Enum
+    type: str  # Enum
     created_at: datetime
     updated_at: datetime
     entity_type: str = "workflow-state"
@@ -549,15 +549,8 @@ class Project:
         return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
 
 @dataclass
-class Repository:
-    id: int
-    @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Repository":
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
-
-@dataclass
 class SearchInputs:
-    query: any
+    query: Any
     detail: str = "slim"
     page_size: int = 25
 

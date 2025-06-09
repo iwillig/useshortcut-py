@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 requests = "~=2.32.3"
-click = "~=8.1.8"
 
 [dev-packages]
 black = "~=24.4.2"
@@ -14,6 +13,7 @@ pytest-cov = "*"
 invoke = "~=2.2.0"
 twine = "*"
 wheel = "*"
+build = "*"
 
 [requires]
 python_version = "3.13"

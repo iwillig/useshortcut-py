@@ -65,7 +65,9 @@ def install(c: Context, dev: bool = True):
 @task
 def build(c: Context):
     """Build the package"""
-    c.run("python setup.py sdist bdist_wheel", pty=True)
+    print("Building distribution packages...")
+    c.run("pipenv run python -m build", pty=True)
+    print("\nBuild complete! Check the dist/ directory for packages.")
 
 
 @task

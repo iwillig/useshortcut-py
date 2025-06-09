@@ -9,7 +9,6 @@ This is a Python REST API client for Shortcut (formerly Clubhouse) API v3. The l
   - `models.py` - Data models representing Shortcut entities (Story, Epic, Project, etc.)
 - `tests/` - Test files
   - `test_client.py` - Basic client tests
-- `cli.py` - Command-line interface using Click
 
 ## Key Components
 
@@ -64,7 +63,6 @@ This runs pytest through Pipenv.
 ## Dependencies
 - Python 3.x
 - requests - HTTP client
-- click - CLI framework
 - Pipenv - Dependency management
 
 ## Environment Variables

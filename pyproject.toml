@@ -1,24 +1,59 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "useshortcut"
 version = "0.0.1"
 description = "A REST client for the Shortcut REST API"
-authors = ["Ivan Willig <iwillig@gmail.com>", "Chris Demwell <cdemwell@gmail.com>"]
+authors = [
+    {name = "Ivan Willig", email = "iwillig@gmail.com"},
+    {name = "Chris Demwell", email = "cdemwell@gmail.com"}
+]
 readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests>=2.25.0",
+]
+keywords = ["shortcut", "api", "client", "rest", "project-management", "clubhouse"]
 
-[tool.poetry.dependencies]
-python = "^3.13"
-requests = "^2.32.3"
-click = "^8.1.8"
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
-pytest = "^8.3.4"
-invoke = "^2.2.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.optional-dependencies]
+dev = [
+    "black>=24.0.0",
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "twine>=4.0.0",
+    "wheel>=0.40.0",
+    "build>=0.10.0",
+    "invoke>=2.2.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/iwillig/useshortcut-py"
 Issues = "https://github.com/iwillig/useshortcut-py/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["useshortcut*"]
+exclude = ["tests*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

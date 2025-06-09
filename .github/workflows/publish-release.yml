@@ -35,7 +35,7 @@ jobs:
       
       - name: Run tests
         run: |
-          pipenv install --dev
+          pipenv install --dev --python 3.11
           pipenv run pytest -v
       
       - name: Build package

@@ -38,7 +38,7 @@ jobs:
         id: cache-pipenv
         with:
           path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pipenv-${{ hashFiles('**/Pipfile') }}
           restore-keys: |
             ${{ runner.os }}-python-${{ matrix.python-version }}-pipenv-
       

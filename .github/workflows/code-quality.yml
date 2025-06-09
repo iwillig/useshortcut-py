@@ -27,13 +27,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-quality-${{ hashFiles('**/Pipfile.lock') }}
+          key: ${{ runner.os }}-pipenv-quality-${{ hashFiles('**/Pipfile') }}
           restore-keys: |
             ${{ runner.os }}-pipenv-quality-
       
       - name: Install dependencies
         run: |
-          pipenv install --dev
+          pipenv install --dev --python 3.11
       
       - name: Check code formatting
         run: |

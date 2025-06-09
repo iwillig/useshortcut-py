@@ -7,6 +7,7 @@ JSON = Union[Dict[str, Any], List[Dict[str, Any]]]
 
 class APIClient:
     """Client for interacting with the Shortcut API v3."""
+
     BASE_URL = "https://api.app.shortcut.com/api/v3"
 
     def __init__(self, api_token: str, base_url: Optional[str] = None) -> None:
@@ -17,12 +18,14 @@ class APIClient:
         else:
             self.base_url = base_url
         self.session = requests.Session()
-        self.session.headers.update({
-            "Content-Type": "application/json; charset=utf-8",
-            "Shortcut-Token": api_token,
-            "Accept": "application/json; charset=utf-8",
-            "User-Agent": "useshortcut-py/0.0.1",
-        })
+        self.session.headers.update(
+            {
+                "Content-Type": "application/json; charset=utf-8",
+                "Shortcut-Token": api_token,
+                "Accept": "application/json; charset=utf-8",
+                "User-Agent": "useshortcut-py/0.0.1",
+            }
+        )
 
         super().__init__()
 
@@ -53,7 +56,8 @@ class APIClient:
 
     def search_stories(self, params: models.SearchInputs):
         return models.SearchStoryResult.from_json(
-            self._make_request("GET", "/search/stories", params=params.__dict__))
+            self._make_request("GET", "/search/stories", params=params.__dict__)
+        )
 
     def create_story(self, story: models.StoryInput) -> models.Story:
         """Create a new story.
@@ -182,7 +186,9 @@ class APIClient:
         data = self._make_request("GET", f"/iterations/{iteration_id}")
         return models.Iteration.from_json(data)
 
-    def create_iteration(self, iteration: models.CreateIterationInput) -> models.Iteration:
+    def create_iteration(
+        self, iteration: models.CreateIterationInput
+    ) -> models.Iteration:
         """Create a new iteration.
         Args:
             iteration: Iteration object with the iteration details
@@ -193,7 +199,9 @@ class APIClient:
         data = self._make_request("POST", "/iterations", json=iteration.__dict__)
         return models.Iteration.from_json(data)
 
-    def update_iteration(self, iteration_id: int, iteration: models.UpdateIterationInput) -> models.Iteration:
+    def update_iteration(
+        self, iteration_id: int, iteration: models.UpdateIterationInput
+    ) -> models.Iteration:
         """Update an existing iteration.
         Args:
             iteration_id: The ID of the iteration to update
@@ -202,7 +210,9 @@ class APIClient:
         Returns:
             Updated Iteration object
         """
-        data = self._make_request("PUT", f"/iterations/{iteration_id}", json=iteration.__dict__)
+        data = self._make_request(
+            "PUT", f"/iterations/{iteration_id}", json=iteration.__dict__
+        )
         return models.Iteration.from_json(data)
 
     def delete_iteration(self, iteration_id: int) -> None:
@@ -214,7 +224,9 @@ class APIClient:
 
     ## Story Link (AKA Story Relationships)
 
-    def create_story_link(self, params: models.StoryLinkInput) -> List[models.StoryLink]:
+    def create_story_link(
+        self, params: models.StoryLinkInput
+    ) -> List[models.StoryLink]:
         """
         Create a new story link
         Args:
@@ -236,7 +248,9 @@ class APIClient:
         data = self._make_request("GET", f"/story-links/{story_link_id}")
         return models.StoryLink.from_json(data)
 
-    def update_story_link(self, story_link_id: int, params: models.StoryLinkInput) -> models.StoryLink:
+    def update_story_link(
+        self, story_link_id: int, params: models.StoryLinkInput
+    ) -> models.StoryLink:
         """Update an existing story link.
         Args:
             story_link_id: The ID of the story link to update
@@ -244,7 +258,9 @@ class APIClient:
         Returns
             Updated Story Link object
         """
-        data = self._make_request("PUT", f"/story-links/{story_link_id}", json=params.__dict__)
+        data = self._make_request(
+            "PUT", f"/story-links/{story_link_id}", json=params.__dict__
+        )
         return models.StoryLink.from_json(data)
 
     def delete_story_link(self, story_link_id: int) -> None:
@@ -284,7 +300,9 @@ class APIClient:
         Returns
             Group object
         """
-        return models.Group.from_json(self._make_request("POST", "/groups", json=params.__dict__))
+        return models.Group.from_json(
+            self._make_request("POST", "/groups", json=params.__dict__)
+        )
 
     def update_group(self, params: models.UpdateGroupInput) -> models.Group:
         """Update an existing group.
@@ -293,7 +311,9 @@ class APIClient:
         Returns:
             Group object
         """
-        return models.Group.from_json(self._make_request("PUT", f"/groups/{params.id}", json=params.__dict__))
+        return models.Group.from_json(
+            self._make_request("PUT", f"/groups/{params.id}", json=params.__dict__)
+        )
 
     def delete_group(self, group_id: int) -> None:
         """
@@ -317,7 +337,9 @@ class APIClient:
         data = self._make_request("GET", f"/key-results/{key_result_id}")
         return models.KeyResult.from_json(data)
 
-    def update_key_result(self, key_result_id: int, params: models.KeyResultInput) -> models.KeyResult:
+    def update_key_result(
+        self, key_result_id: int, params: models.KeyResultInput
+    ) -> models.KeyResult:
         """
         Update a specific key result by ID.
         Args:
@@ -326,9 +348,9 @@ class APIClient:
         Returns:
             KeyResult object
         """
-        data = self._make_request("PUT",
-                                  f"/key-results/{key_result_id}",
-                                  json=params.__dict__)
+        data = self._make_request(
+            "PUT", f"/key-results/{key_result_id}", json=params.__dict__
+        )
         return models.KeyResult.from_json(data)
 
     ## Labels
@@ -359,9 +381,7 @@ class APIClient:
         Returns:
             The new Label object
         """
-        data = self._make_request("POST",
-                                  "/labels",
-                                  json=params.__dict__)
+        data = self._make_request("POST", "/labels", json=params.__dict__)
         return models.Label.from_json(data)
 
     def delete_label(self, label_id: int) -> None:
@@ -384,16 +404,22 @@ class APIClient:
         data = self._make_request("GET", "/linked-files")
         return [models.LinkedFiles.from_json(x) for x in data]
 
-    def create_linked_file(self, params: models.CreateLinkedFilesInput) -> models.LinkedFiles:
+    def create_linked_file(
+        self, params: models.CreateLinkedFilesInput
+    ) -> models.LinkedFiles:
         """Create a new linked file.
         Args:
             params: LinkedFile parameters
         Returns:
             The new LinkedFile object
         """
-        return models.LinkedFiles.from_json(self._make_request("POST", "/linked-files", json=params.__dict__))
+        return models.LinkedFiles.from_json(
+            self._make_request("POST", "/linked-files", json=params.__dict__)
+        )
 
-    def update_linked_file(self, linked_file_id: int, params: models.UpdatedLinkedFilesInput):
+    def update_linked_file(
+        self, linked_file_id: int, params: models.UpdatedLinkedFilesInput
+    ):
         """
         Update a linked file.
         Args:
@@ -403,7 +429,11 @@ class APIClient:
         Returns:
             Updated LinkedFile object
         """
-        return models.LinkedFiles.from_json(self._make_request("PUT", f"/linked-files/{linked_file_id}", json=params.__dict__))
+        return models.LinkedFiles.from_json(
+            self._make_request(
+                "PUT", f"/linked-files/{linked_file_id}", json=params.__dict__
+            )
+        )
 
     def delete_linked_file(self, linked_file_id: int) -> None:
         """
@@ -444,7 +474,9 @@ class APIClient:
         Returns:
             The updated File object
         """
-        return models.File.from_json(self._make_request("PUT", f"/files/{file_id}", json=params.__dict__))
+        return models.File.from_json(
+            self._make_request("PUT", f"/files/{file_id}", json=params.__dict__)
+        )
 
     def delete_file(self, file_id: int) -> None:
         """
@@ -474,7 +506,9 @@ class APIClient:
         Returns:
             A Member object matching the given member_id
         """
-        return models.Member.from_json(self._make_request("GET", f"/members/{member_id}"))
+        return models.Member.from_json(
+            self._make_request("GET", f"/members/{member_id}")
+        )
 
     ## Objectives
     def list_objectives(self) -> List[models.Objective]:
@@ -489,8 +523,12 @@ class APIClient:
         data = self._make_request("POST", "/objectives", json=params.__dict__)
         return models.Objective.from_json(data)
 
-    def update_objective(self, objective_id: int, params: models.UpdateObjectiveInput) -> models.Objective:
-        data = self._make_request("PUT", f"/objectives/{objective_id}", json=params.__dict__)
+    def update_objective(
+        self, objective_id: int, params: models.UpdateObjectiveInput
+    ) -> models.Objective:
+        data = self._make_request(
+            "PUT", f"/objectives/{objective_id}", json=params.__dict__
+        )
         return models.Objective.from_json(data)
 
     def delete_objective(self, objective_id: int) -> None:
@@ -503,14 +541,20 @@ class APIClient:
         return [models.Project.from_json(x) for x in data]
 
     def get_project(self, project_id: int) -> models.Project:
-        return models.Project.from_json(self._make_request("GET", f"/projects/{project_id}"))
+        return models.Project.from_json(
+            self._make_request("GET", f"/projects/{project_id}")
+        )
 
     def create_project(self, params) -> models.Project:
         data = self._make_request("POST", "/projects", json=params.__dict__)
         return models.Project.from_json(data)
 
-    def update_project(self, project_id: int, params: models.UpdateProjectInput) -> models.Project:
-        data = self._make_request("PUT", f"/projects/{project_id}", json=params.__dict__)
+    def update_project(
+        self, project_id: int, params: models.UpdateProjectInput
+    ) -> models.Project:
+        data = self._make_request(
+            "PUT", f"/projects/{project_id}", json=params.__dict__
+        )
         return models.Project.from_json(data)
 
     def delete_project(self, project_id: int) -> None:
@@ -546,8 +590,12 @@ class APIClient:
         data = self._make_request("POST", "/categories", json=params.__dict__)
         return models.Category.from_json(data)
 
-    def update_category(self, category_id: int, params: models.UpdateCategoryInput) -> models.Category:
-        data = self._make_request("PUT", f"/categories/{category_id}", json=params.__dict__)
+    def update_category(
+        self, category_id: int, params: models.UpdateCategoryInput
+    ) -> models.Category:
+        data = self._make_request(
+            "PUT", f"/categories/{category_id}", json=params.__dict__
+        )
         return models.Category.from_json(data)
 
     def delete_category(self, category_id: int) -> None:

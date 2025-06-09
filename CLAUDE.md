@@ -54,13 +54,18 @@ Run tests using the Makefile:
 make test
 ```
 
-This runs pytest through Poetry.
+Or using invoke:
+```bash
+pipenv run invoke test
+```
+
+This runs pytest through Pipenv.
 
 ## Dependencies
 - Python 3.x
 - requests - HTTP client
 - click - CLI framework
-- Poetry - Dependency management
+- Pipenv - Dependency management
 
 ## Environment Variables
 - `SHORTCUT_API_TOKEN` - Your Shortcut API token (required)

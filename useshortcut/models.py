@@ -412,13 +412,12 @@ class Profile:
     id: str
     name: str
     mention_name: str
-    gravatar_hash: str
     is_owner: bool
     email_address: str
     deactivated: bool
 
-    display_icon: Any
-
+    gravatar_hash: Optional[str] = None
+    display_icon: Optional[Any] = None
     entity_type: str = "profile"
     two_factor_auth_activated: Optional[bool] = None
 
@@ -569,8 +568,8 @@ class UpdateProjectInput:
 class Project:
     id: int
     name: str
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Project":

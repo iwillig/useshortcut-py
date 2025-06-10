@@ -82,6 +82,9 @@ class TestMemberEndpoints:
                     "id": "12345678-1234-1234-1234-123456789012",
                     "mention_name": "admin",
                     "name": "Admin User",
+                    "email_address": "admin@example.com",
+                    "is_owner": True,
+                    "deactivated": False,
                 },
             },
             {
@@ -93,6 +96,9 @@ class TestMemberEndpoints:
                     "id": "87654321-4321-4321-4321-210987654321",
                     "mention_name": "member",
                     "name": "Member User",
+                    "email_address": "member@example.com",
+                    "is_owner": False,
+                    "deactivated": False,
                 },
             },
         ]
@@ -249,6 +255,7 @@ class TestEpicEndpoints:
         epics_response = [
             {
                 "id": 2001,
+                "global_id": "ep-2001",
                 "name": "First Epic",
                 "description": "Epic description",
                 "epic_state_id": 100,
@@ -259,6 +266,7 @@ class TestEpicEndpoints:
             },
             {
                 "id": 2002,
+                "global_id": "ep-2002",
                 "name": "Second Epic",
                 "description": "",
                 "epic_state_id": 101,
@@ -284,6 +292,7 @@ class TestEpicEndpoints:
 
         epic_response = {
             "id": 2003,
+            "global_id": "ep-2003",
             "name": "New Epic",
             "description": "",
             "epic_state_id": 100,
@@ -332,6 +341,8 @@ class TestProjectEndpoints:
                 "abbreviation": "FE",
                 "archived": False,
                 "color": "#00ff00",
+                "created_at": "2023-01-01T00:00:00Z",
+                "updated_at": "2023-01-02T00:00:00Z",
             },
         ]
 
@@ -360,11 +371,32 @@ class TestWorkflowEndpoints:
                 "states": [
                     {
                         "id": 500000,
+                        "global_id": "wf-state-500000",
                         "name": "Unstarted",
                         "type": "unstarted",
                         "position": 0,
+                        "description": "",
+                        "verb": "start",
+                        "num_stories": 0,
+                        "num_story_templates": 0,
+                        "created_at": "2023-01-01T00:00:00Z",
+                        "updated_at": "2023-01-01T00:00:00Z",
+                        "entity_type": "workflow-state",
                     },
-                    {"id": 500001, "name": "Started", "type": "started", "position": 1},
+                    {
+                        "id": 500001,
+                        "global_id": "wf-state-500001",
+                        "name": "Started",
+                        "type": "started",
+                        "position": 1,
+                        "description": "",
+                        "verb": "continue",
+                        "num_stories": 0,
+                        "num_story_templates": 0,
+                        "created_at": "2023-01-01T00:00:00Z",
+                        "updated_at": "2023-01-01T00:00:00Z",
+                        "entity_type": "workflow-state",
+                    },
                 ],
             }
         ]
@@ -385,7 +417,22 @@ class TestWorkflowEndpoints:
             "name": "Default Workflow",
             "description": "Default workflow for stories",
             "default_state_id": 500000,
-            "states": [{"id": 500000, "name": "Unstarted", "type": "unstarted"}],
+            "states": [
+                {
+                    "id": 500000,
+                    "global_id": "wf-state-500000",
+                    "name": "Unstarted",
+                    "type": "unstarted",
+                    "position": 0,
+                    "description": "",
+                    "verb": "start",
+                    "num_stories": 0,
+                    "num_story_templates": 0,
+                    "created_at": "2023-01-01T00:00:00Z",
+                    "updated_at": "2023-01-01T00:00:00Z",
+                    "entity_type": "workflow-state",
+                }
+            ],
         }
 
         requests_mock.get(f"{base_url}/workflows/100", json=workflow_response)

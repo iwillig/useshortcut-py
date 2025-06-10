@@ -19,8 +19,8 @@ def minimal_member_response():
             "is_owner": False,
             "deactivated": False,
             "two_factor_auth_activated": True,
-            "gravatar_hash": "hash123",  # Required field
-            "display_icon": None,  # Required field
+            "gravatar_hash": None,  # Required but nullable
+            "display_icon": None,  # Required but nullable
         },
     }
 
@@ -39,6 +39,7 @@ def minimal_workflow_state():
         "position": 0,
         "created_at": "2023-01-01T00:00:00Z",
         "updated_at": "2023-01-01T00:00:00Z",
+        "entity_type": "workflow-state",  # Added required field
     }
 
 

@@ -16,6 +16,7 @@ wheel = "*"
 build = "*"
 pyyaml = "*"
 requests-mock = "*"
+faker = "*"
 
 [requires]
 python_version = "3"

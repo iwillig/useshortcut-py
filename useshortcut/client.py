@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any, List, Union
+from typing import Optional, Dict, Any, List, Union, Iterator
 import requests
 import useshortcut.models as models
 
@@ -48,6 +48,42 @@ class APIClient:
         response.raise_for_status()
         return response.json() if response.content else response
 
+    def _paginate_results(
+        self,
+        initial_response: models.SearchStoryResult,
+        params: models.SearchInputs
+    ) -> Iterator[models.Story]:
+        """Iterate through all pages of search results.
+
+        Args:
+            initial_response: The first page of results
+            params: The search parameters
+
+        Yields:
+            Individual Story objects from all pages
+        """
+        # Yield items from first page
+        for item in initial_response.data:
+            yield item
+
+        # Follow pagination links
+        next_url = initial_response.next
+        while next_url:
+            # Extract just the path and query from the next URL
+            if next_url.startswith("http"):
+                # Full URL provided
+                next_path = next_url.split(self.base_url)[-1]
+            else:
+                next_path = next_url
+
+            response = self._make_request("GET", next_path)
+            result = models.SearchStoryResult.from_json(response)
+
+            for item in result.data:
+                yield item
+
+            next_url = result.next
+
     def get_current_member(self):
         return models.Member.from_json(self._make_request("GET", "/member"))
 
@@ -58,6 +94,18 @@ class APIClient:
         return models.SearchStoryResult.from_json(
             self._make_request("GET", "/search/stories", params=params.__dict__)
         )
+
+    def search_stories_iter(self, params: models.SearchInputs) -> Iterator[models.Story]:
+        """Search for stories with automatic pagination.
+
+        Args:
+            params: Search parameters
+
+        Yields:
+            Individual Story objects from all pages of results
+        """
+        initial_response = self.search_stories(params)
+        return self._paginate_results(initial_response, params)
 
     def create_story(self, story: models.StoryInput) -> models.Story:
         """Create a new story.
@@ -301,15 +349,16 @@ class APIClient:
             self._make_request("POST", "/groups", json=params.__dict__)
         )
 
-    def update_group(self, params: models.UpdateGroupInput) -> models.Group:
+    def update_group(self, group_id: int, params: models.UpdateGroupInput) -> models.Group:
         """Update an existing group.
         Args:
+            group_id: The ID of the group to update
             params: Group parameters
         Returns:
             Group object
         """
         return models.Group.from_json(
-            self._make_request("PUT", f"/groups/{params.id}", json=params.__dict__)
+            self._make_request("PUT", f"/groups/{group_id}", json=params.__dict__)
         )
 
     def delete_group(self, group_id: int) -> None:
@@ -542,7 +591,7 @@ class APIClient:
             self._make_request("GET", f"/projects/{project_id}")
         )
 
-    def create_project(self, params) -> models.Project:
+    def create_project(self, params: models.CreateProjectInput) -> models.Project:
         data = self._make_request("POST", "/projects", json=params.__dict__)
         return models.Project.from_json(data)
 

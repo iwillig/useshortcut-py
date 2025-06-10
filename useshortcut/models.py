@@ -1,6 +1,8 @@
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, TypeVar, Generic
 from dataclasses import dataclass, field
 from datetime import datetime
+
+T = TypeVar('T')
 
 
 @dataclass
@@ -9,10 +11,8 @@ class StoryInput:
     workflow_state_id: int
 
 
-# TODO: Should these values have a default value when they are optional?
 @dataclass
 class Story:
-
     name: str
     id: Optional[int] = None  # This does not exist when you create a story.
     global_id: Optional[str] = None
@@ -30,7 +30,7 @@ class Story:
     workflow_id: Optional[int] = None
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
-    labels: List[Dict[str, Any]] = None
+    labels: List[Dict[str, Any]] = field(default_factory=list)
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     app_url: Optional[str] = None
@@ -49,32 +49,32 @@ class Story:
 
     blocked: Optional[bool] = None
 
-    pull_requests: Optional[List[Dict[str, Any]]] = None
-    story_links: Optional[List[Dict[str, Any]]] = None
-    comments: Optional[List[Dict[str, Any]]] = None
-    branches: Optional[List[Dict[str, Any]]] = None
-    tasks: Optional[List[Dict[str, Any]]] = None
-    commits: Optional[List[Dict[str, Any]]] = None
-    files: Optional[List[Dict[str, Any]]] = None
-    external_links: Optional[List[Dict[str, Any]]] = None
+    pull_requests: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    story_links: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    comments: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    branches: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    tasks: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    commits: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    files: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    external_links: Optional[List[Dict[str, Any]]] = field(default_factory=list)
 
-    group_mention_ids: Optional[List[int]] = None
-    comment_ids: Optional[List[int]] = None
-    follower_ids: Optional[List[int]] = None
-    owner_ids: Optional[List[int]] = None
+    group_mention_ids: Optional[List[int]] = field(default_factory=list)
+    comment_ids: Optional[List[int]] = field(default_factory=list)
+    follower_ids: Optional[List[int]] = field(default_factory=list)
+    owner_ids: Optional[List[int]] = field(default_factory=list)
 
-    previous_iteration_ids: Optional[List[int]] = None
+    previous_iteration_ids: Optional[List[int]] = field(default_factory=list)
 
-    mention_ids: Optional[List[int]] = None
-    member_mention_ids: Optional[List[int]] = None
-    label_ids: Optional[List[int]] = None
-    task_ids: Optional[List[int]] = None
-    file_ids: Optional[List[int]] = None
+    mention_ids: Optional[List[int]] = field(default_factory=list)
+    member_mention_ids: Optional[List[int]] = field(default_factory=list)
+    label_ids: Optional[List[int]] = field(default_factory=list)
+    task_ids: Optional[List[int]] = field(default_factory=list)
+    file_ids: Optional[List[int]] = field(default_factory=list)
 
-    linked_files: Optional[List[Dict[str, Any]]] = None
-    linked_file_ids: Optional[List[int]] = None
+    linked_files: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    linked_file_ids: Optional[List[int]] = field(default_factory=list)
 
-    custom_fields: Optional[List[Dict[str, Any]]] = None
+    custom_fields: Optional[List[Dict[str, Any]]] = field(default_factory=list)
     num_tasks_completed: Optional[int] = None
 
     stats: Optional[Dict[str, Any]] = None
@@ -102,7 +102,7 @@ class Epic:
     archived: Optional[bool] = None
     description: Optional[str] = None
     state: str = "to do"  # enum value
-    group_id: str = None
+    group_id: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     deadline: Optional[datetime] = None
@@ -116,29 +116,29 @@ class Epic:
     completed: Optional[bool] = None
     completed_at: Optional[datetime] = None
     completed_at_override: Optional[datetime] = None
-    objective_ids: Optional[List[str]] = None
+    objective_ids: Optional[List[str]] = field(default_factory=list)
     planned_start_date: Optional[datetime] = None
     started_at_override: Optional[datetime] = None
     milestone_id: Optional[int] = None
     epic_state_id: Optional[int] = None
     app_url: Optional[str] = None
     entity_type: str = "epic"
-    group_mention_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
-    labels: Optional[List[Dict[str, Any]]] = None
-    label_ids: Optional[List[int]] = None
-    group_ids: Optional[List[str]] = None
-    owner_ids: Optional[List[str]] = None
+    group_mention_ids: Optional[List[str]] = field(default_factory=list)
+    follower_ids: Optional[List[str]] = field(default_factory=list)
+    labels: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    label_ids: Optional[List[int]] = field(default_factory=list)
+    group_ids: Optional[List[str]] = field(default_factory=list)
+    owner_ids: Optional[List[str]] = field(default_factory=list)
     external_id: Optional[str] = None
-    position: int = None
+    position: Optional[int] = None
 
     stories_without_projects: Optional[Any] = None
 
-    project_ids: Optional[List[int]] = None
-    mention_ids: Optional[List[str]] = None
-    member_mention_ids: Optional[List[str]] = None
-    associated_groups: Optional[List[Dict[str, Any]]] = None
-    stats: Any = None
+    project_ids: Optional[List[int]] = field(default_factory=list)
+    mention_ids: Optional[List[str]] = field(default_factory=list)
+    member_mention_ids: Optional[List[str]] = field(default_factory=list)
+    associated_groups: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    stats: Optional[Any] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Epic":
@@ -163,7 +163,7 @@ class CreateIterationInput:
 
 @dataclass
 class UpdateIterationInput:
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 @dataclass
@@ -179,18 +179,18 @@ class Iteration:
     updated_at: Optional[datetime] = None
 
     app_url: Optional[str] = None
-    labels: Optional[List[Dict[str, Any]]] = None
-    follower_ids: Optional[List[str]] = None
-    group_ids: Optional[List[str]] = None
-    mention_ids: Optional[List[str]] = None
-    member_mention_ids: Optional[List[str]] = None
-    group_mention_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    labels: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    follower_ids: Optional[List[str]] = field(default_factory=list)
+    group_ids: Optional[List[str]] = field(default_factory=list)
+    mention_ids: Optional[List[str]] = field(default_factory=list)
+    member_mention_ids: Optional[List[str]] = field(default_factory=list)
+    group_mention_ids: Optional[List[str]] = field(default_factory=list)
+    label_ids: Optional[List[int]] = field(default_factory=list)
 
-    associated_groups: Optional[List[Dict[str, Any]]] = None
+    associated_groups: Optional[List[Dict[str, Any]]] = field(default_factory=list)
 
     entity_type: str = "iteration"
-    stats: Any = None
+    stats: Optional[Any] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Iteration":
@@ -227,7 +227,7 @@ class CreateGroupInput:
 
 @dataclass
 class UpdateGroupInput:
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 @dataclass
@@ -246,12 +246,12 @@ class Group:
     color_key: Optional[str] = None
     display_icon: Optional[Any] = None
 
-    member_ids: Optional[List[str]] = None
+    member_ids: Optional[List[str]] = field(default_factory=list)
     num_stories_started: Optional[int] = None
     num_stories: Optional[int] = None
     num_epics_started: Optional[int] = None
     num_stories_backlog: Optional[int] = None
-    workflow_ids: Optional[List[int]] = None
+    workflow_ids: Optional[List[int]] = field(default_factory=list)
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -309,7 +309,7 @@ class Label:
     id: int
     name: str
     global_id: str
-    external_id: Optional[str]
+    external_id: Optional[str] = None
     app_url: Optional[str] = None
     archived: bool = False
     color: Optional[str] = None
@@ -317,7 +317,7 @@ class Label:
     updated_at: Optional[datetime] = None
     description: Optional[str] = None
     entity_type: str = "label"
-    stats: Any = None
+    stats: Optional[Any] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Label":
@@ -333,27 +333,27 @@ class CreateLinkedFilesInput:
 
 @dataclass
 class UpdatedLinkedFilesInput:
-    name: Optional[str]
-    type: Optional[str]
-    url: Optional[str]
-    uploader_id: Optional[str]
+    name: Optional[str] = None
+    type: Optional[str] = None
+    url: Optional[str] = None
+    uploader_id: Optional[str] = None
 
 
 @dataclass
 class LinkedFiles:
     id: int
     global_id: str
-    name: Optional[str]
+    name: Optional[str] = None
 
-    content_type: Optional[str]
+    content_type: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     description: Optional[str] = None
     entity_type: str = "linked-file"
 
-    group_mention_ids: Optional[List[str]] = None
-    member_mention_ids: Optional[List[str]] = None
-    mention_ids: Optional[List[str]] = None
+    group_mention_ids: Optional[List[str]] = field(default_factory=list)
+    member_mention_ids: Optional[List[str]] = field(default_factory=list)
+    mention_ids: Optional[List[str]] = field(default_factory=list)
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "LinkedFiles":
@@ -379,11 +379,11 @@ class File:
     filename: str
     entity_type: str = "file"
     external_id: Optional[str] = None
-    group_mention_ids: Optional[List[str]] = None
-    member_mention_ids: Optional[List[str]] = None
-    mention_ids: Optional[List[str]] = None
+    group_mention_ids: Optional[List[str]] = field(default_factory=list)
+    member_mention_ids: Optional[List[str]] = field(default_factory=list)
+    mention_ids: Optional[List[str]] = field(default_factory=list)
     story_link_id: Optional[int] = None
-    story_ids: Optional[List[int]] = None
+    story_ids: Optional[List[int]] = field(default_factory=list)
     thumbnail_url: Optional[str] = None
 
     @classmethod
@@ -440,7 +440,7 @@ class CreateObjectiveInput:
 
 @dataclass
 class UpdateObjectiveInput:
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 @dataclass
@@ -471,9 +471,9 @@ class Objective:
 
 @dataclass
 class Repository:
-    id: Optional[int]
-    name: Optional[str]
     type: str
+    id: Optional[int] = None
+    name: Optional[str] = None
     entity_type: str = "repository"
     url: Optional[str] = None
     full_name: Optional[str] = None
@@ -515,7 +515,7 @@ class Workflow:
     entity_type: str = "workflow"
 
     auto_assign_owner: Optional[bool] = None
-    project_ids: Optional[List[int]] = None
+    project_ids: Optional[List[int]] = field(default_factory=list)
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -540,7 +540,7 @@ class CreateCategoryInput:
 
 @dataclass
 class UpdateCategoryInput:
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 @dataclass
@@ -569,7 +569,7 @@ class CreateProjectInput:
 
 @dataclass
 class UpdateProjectInput:
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 @dataclass
@@ -602,3 +602,31 @@ class SearchStoryResult:
         if "data" in data:
             data["data"] = [Story.from_json(x) for x in data["data"]]
         return cls(**data)
+
+
+@dataclass
+class PaginatedResponse(Generic[T]):
+    """Generic paginated response wrapper for list endpoints."""
+    data: List[T]
+    next: Optional[str] = None
+    total: Optional[int] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any], item_class: type[T]) -> "PaginatedResponse[T]":
+        """Create a PaginatedResponse from JSON data.
+
+        Args:
+            data: The raw JSON response
+            item_class: The class to use for deserializing items
+        """
+        if isinstance(data, list):
+            # Non-paginated response - wrap it
+            return cls(data=[item_class.from_json(item) for item in data])
+        else:
+            # Paginated response
+            result = {
+                "data": [item_class.from_json(item) for item in data.get("data", [])],
+                "next": data.get("next"),
+                "total": data.get("total")
+            }
+            return cls(**result)

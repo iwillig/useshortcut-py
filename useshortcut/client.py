@@ -91,15 +91,12 @@ class APIClient:
         data = self._make_request("PUT", f"/stories/{story_id}", json=story.__dict__)
         return models.Story.from_json(data)
 
-    # This delete method returns the response, helpful for debugging.
-    # It also accepts the story model object instead of an ID. TODO: Revisit this.
-    def delete_story(self, story: models.Story) -> Any:
+    def delete_story(self, story_id: int) -> None:
         """Delete a story.
         Args:
-            story: The story object to delete
+            story_id: The ID of the story to delete
         """
-        story_id = story.id
-        return self._make_request("DELETE", f"/stories/{story_id}")
+        self._make_request("DELETE", f"/stories/{story_id}")
 
     # Workflow endpoints
     def list_workflows(self):

@@ -102,7 +102,7 @@ def test_answer():
 
 #         print("new", story)
 
-#         resp = client.delete_story(story)
+#         resp = client.delete_story(story.id)
 #         print(resp)
 #     except requests.exceptions.RequestException as e:
 #         print(e)

@@ -122,6 +122,7 @@ class TestLabelOperations:
 
         label_response = {
             "id": 4001,
+            "global_id": "label-4001",
             "name": "bug",
             "color": "#ff0000",
             "archived": False,
@@ -130,6 +131,8 @@ class TestLabelOperations:
             "external_id": None,
             "stats": {},
             "entity_type": "label",
+            "app_url": "https://app.shortcut.com/workspace/label/4001",
+            "description": None,
         }
 
         requests_mock.post(f"{base_url}/labels", json=label_response)
@@ -194,10 +197,15 @@ class TestCategoryOperations:
 
         category_response = {
             "id": 6001,
+            "global_id": "cat-6001",
             "name": "Q1 Goals",
             "type": "milestone",
             "color": "#0000ff",
             "archived": False,
+            "created_at": "2023-01-01T00:00:00Z",
+            "updated_at": "2023-01-01T00:00:00Z",
+            "entity_type": "category",
+            "external_id": None,
         }
 
         requests_mock.post(f"{base_url}/categories", json=category_response)

@@ -22,6 +22,7 @@ class TestLabelEndpoints:
         labels_response = [
             {
                 "id": 4001,
+                "global_id": "label-4001",
                 "name": "bug",
                 "color": "#ff0000",
                 "archived": False,
@@ -31,9 +32,11 @@ class TestLabelEndpoints:
                 "stats": {},
                 "entity_type": "label",
                 "app_url": "https://app.shortcut.com/workspace/label/4001",
+                "description": None,
             },
             {
                 "id": 4002,
+                "global_id": "label-4002",
                 "name": "feature",
                 "color": "#00ff00",
                 "archived": False,
@@ -42,6 +45,8 @@ class TestLabelEndpoints:
                 "external_id": None,
                 "stats": {},
                 "entity_type": "label",
+                "app_url": "https://app.shortcut.com/workspace/label/4002",
+                "description": None,
             },
         ]
 
@@ -60,6 +65,7 @@ class TestLabelEndpoints:
 
         label_response = {
             "id": 4003,
+            "global_id": "label-4003",
             "name": "urgent",
             "color": "#ff9900",
             "archived": False,
@@ -68,6 +74,8 @@ class TestLabelEndpoints:
             "external_id": None,
             "stats": {},
             "entity_type": "label",
+            "app_url": "https://app.shortcut.com/workspace/label/4003",
+            "description": None,
         }
 
         requests_mock.post(f"{base_url}/labels", json=label_response)
@@ -157,21 +165,43 @@ class TestGroupEndpoints:
         groups_response = [
             {
                 "id": "12345678-1234-1234-1234-123456789012",
+                "global_id": "grp-12345678",
                 "name": "Engineering",
                 "mention_name": "engineering",
                 "description": "Engineering team",
                 "archived": False,
                 "color": "#0066cc",
+                "color_key": "blue",
                 "workflow_ids": [100],
                 "member_ids": ["11111111-1111-1111-1111-111111111111"],
                 "created_at": "2023-01-01T00:00:00Z",
                 "updated_at": "2023-01-02T00:00:00Z",
+                "entity_type": "group",
+                "app_url": "https://app.shortcut.com/workspace/group/12345678",
+                "num_stories": 0,
+                "num_stories_started": 0,
+                "num_stories_backlog": 0,
+                "num_epics_started": 0,
+                "display_icon": None,
             },
             {
                 "id": "87654321-4321-4321-4321-210987654321",
+                "global_id": "grp-87654321",
                 "name": "Product",
                 "mention_name": "product",
                 "description": "Product team",
+                "archived": False,
+                "color": "#00cc66",
+                "color_key": "green",
+                "workflow_ids": [100],
+                "member_ids": [],
+                "entity_type": "group",
+                "app_url": "https://app.shortcut.com/workspace/group/87654321",
+                "num_stories": 0,
+                "num_stories_started": 0,
+                "num_stories_backlog": 0,
+                "num_epics_started": 0,
+                "display_icon": None,
             },
         ]
 
@@ -189,10 +219,22 @@ class TestGroupEndpoints:
 
         group_response = {
             "id": "99999999-9999-9999-9999-999999999999",
+            "global_id": "grp-99999999",
             "name": "Design",
             "mention_name": "design",
             "description": "",
             "archived": False,
+            "color": "#ff9900",
+            "color_key": "orange",
+            "workflow_ids": [],
+            "member_ids": [],
+            "entity_type": "group",
+            "app_url": "https://app.shortcut.com/workspace/group/99999999",
+            "num_stories": 0,
+            "num_stories_started": 0,
+            "num_stories_backlog": 0,
+            "num_epics_started": 0,
+            "display_icon": None,
         }
 
         requests_mock.post(f"{base_url}/groups", json=group_response)
@@ -211,14 +253,28 @@ class TestCategoryEndpoints:
         categories_response = [
             {
                 "id": 6001,
+                "global_id": "cat-6001",
                 "name": "Q1 Goals",
                 "type": "milestone",
                 "color": "#ff0000",
                 "archived": False,
                 "created_at": "2023-01-01T00:00:00Z",
                 "updated_at": "2023-01-02T00:00:00Z",
+                "entity_type": "category",
+                "external_id": None,
             },
-            {"id": 6002, "name": "Q2 Goals", "type": "milestone", "color": "#00ff00"},
+            {
+                "id": 6002,
+                "global_id": "cat-6002",
+                "name": "Q2 Goals",
+                "type": "milestone",
+                "color": "#00ff00",
+                "archived": False,
+                "created_at": "2023-01-01T00:00:00Z",
+                "updated_at": "2023-01-02T00:00:00Z",
+                "entity_type": "category",
+                "external_id": None,
+            },
         ]
 
         requests_mock.get(f"{base_url}/categories", json=categories_response)
@@ -235,10 +291,15 @@ class TestCategoryEndpoints:
 
         category_response = {
             "id": 6003,
+            "global_id": "cat-6003",
             "name": "Q3 Goals",
             "type": "milestone",
             "color": "#0000ff",
             "archived": False,
+            "created_at": "2023-01-01T00:00:00Z",
+            "updated_at": "2023-01-01T00:00:00Z",
+            "entity_type": "category",
+            "external_id": None,
         }
 
         requests_mock.post(f"{base_url}/categories", json=category_response)
@@ -257,6 +318,7 @@ class TestObjectiveEndpoints:
         objectives_response = [
             {
                 "id": 7001,
+                "global_id": "obj-7001",
                 "name": "Improve Performance",
                 "description": "Improve app performance by 50%",
                 "position": 1,
@@ -296,6 +358,12 @@ class TestFileEndpoints:
                 "url": "https://example.com/screenshot.png",
                 "created_at": "2023-01-01T00:00:00Z",
                 "updated_at": "2023-01-02T00:00:00Z",
+                "entity_type": "file",
+                "external_id": None,
+                "story_ids": [],
+                "mention_ids": [],
+                "member_mention_ids": [],
+                "group_mention_ids": [],
             }
         ]
 
@@ -359,6 +427,7 @@ class TestRepositoryEndpoints:
                 "updated_at": "2023-01-02T00:00:00Z",
                 "external_id": "12345",
                 "full_name": "org/backend-api",
+                "entity_type": "repository",
             }
         ]
 

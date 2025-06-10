@@ -55,3 +55,28 @@ def minimal_project_response():
         "created_at": "2023-01-01T00:00:00Z",
         "updated_at": "2023-01-02T00:00:00Z",
     }
+
+
+def minimal_group_response():
+    """Create a minimal group response that will work with the current models."""
+    return {
+        "id": "12345678-1234-1234-1234-123456789012",
+        "global_id": "grp-12345678",
+        "name": "Engineering",
+        "mention_name": "engineering",
+        "description": "Engineering team",
+        "archived": False,
+        "color": "#0066cc",
+        "color_key": "blue",
+        "workflow_ids": [100],
+        "member_ids": ["11111111-1111-1111-1111-111111111111"],
+        "created_at": "2023-01-01T00:00:00Z",
+        "updated_at": "2023-01-02T00:00:00Z",
+        "entity_type": "group",
+        "app_url": "https://app.shortcut.com/workspace/group/12345678",
+        "num_stories": 0,
+        "num_stories_started": 0,
+        "num_stories_backlog": 0,
+        "num_epics_started": 0,
+        "display_icon": None,
+    }

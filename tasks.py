@@ -1,6 +1,8 @@
 from invoke import task, Context
 import sys
 import os
+import json
+import requests
 
 
 @task
@@ -136,3 +138,23 @@ def update(c: Context):
 def check(c: Context):
     """Check for dependency updates"""
     c.run("pipenv update --outdated", pty=True)
+
+
+@task
+def fetch_api_docs(c: Context, output: str = "shortcut-api-v3.yaml"):
+    """Fetch the OpenAPI documentation from Shortcut API v3
+
+    Args:
+        output: Output filename for the API docs (default: shortcut-api-v3.yaml)
+    """
+    import yaml
+
+    url = "https://api.app.shortcut.com/api/v3/docs"
+
+    response = requests.get(url)
+    response.raise_for_status()
+
+    api_docs = response.json()
+
+    with open(output, "w") as f:
+        yaml.dump(api_docs, f, default_flow_style=False, sort_keys=False)

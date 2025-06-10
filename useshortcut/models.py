@@ -4,22 +4,6 @@ from datetime import datetime
 
 
 @dataclass
-class Label:
-    id: int
-    external_id: Optional[str]
-
-    name: str
-    archived: bool
-    color: str
-    created_at: datetime
-    updated_at: datetime
-    stats: Any
-
-    entity_type: str = "label"
-    app_url: Optional[str] = None
-
-
-@dataclass
 class StoryInput:
     name: str
     workflow_state_id: int
@@ -315,9 +299,9 @@ class KeyResult:
 @dataclass
 class CreateLabelInput:
     name: str
-    color: Optional[str]
-    description: Optional[str]
-    external_id: Optional[str]
+    color: Optional[str] = None
+    description: Optional[str] = None
+    external_id: Optional[str] = None
 
 
 @dataclass
@@ -392,9 +376,9 @@ class File:
     uploader_id: str
     url: str
     size: int
-    external_id: Optional[str]
     filename: str
     entity_type: str = "file"
+    external_id: Optional[str] = None
     group_mention_ids: Optional[List[str]] = None
     member_mention_ids: Optional[List[str]] = None
     mention_ids: Optional[List[str]] = None
@@ -412,13 +396,12 @@ class Profile:
     id: str
     name: str
     mention_name: str
-    gravatar_hash: str
     is_owner: bool
     email_address: str
     deactivated: bool
 
-    display_icon: Any
-
+    gravatar_hash: Optional[str] = None
+    display_icon: Optional[Any] = None
     entity_type: str = "profile"
     two_factor_auth_activated: Optional[bool] = None
 
@@ -464,19 +447,43 @@ class UpdateObjectiveInput:
 class Objective:
     id: int
     global_id: str
+    name: Optional[str] = None
+    description: Optional[str] = None
+    archived: Optional[bool] = None
+    started: Optional[bool] = None
+    completed: Optional[bool] = None
+    entity_type: str = "objective"
+    app_url: Optional[str] = None
+    position: Optional[int] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    started_at_override: Optional[datetime] = None
+    completed_at_override: Optional[datetime] = None
+    state: Optional[str] = None
+    stats: Optional[Any] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Objective":
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        return cls(**data)
 
 
 @dataclass
 class Repository:
-    id: int
+    id: Optional[int]
+    name: Optional[str]
+    type: str
+    entity_type: str = "repository"
+    url: Optional[str] = None
+    full_name: Optional[str] = None
+    external_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Repository":
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        return cls(**data)
 
 
 @dataclass
@@ -569,8 +576,8 @@ class UpdateProjectInput:
 class Project:
     id: int
     name: str
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Project":

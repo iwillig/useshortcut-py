@@ -316,6 +316,7 @@ class Group:
     num_epics_started: Optional[int] = None
     num_stories_backlog: Optional[int] = None
     workflow_ids: Optional[List[int]] = field(default_factory=list)
+    default_workflow_id: Optional[int] = None
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

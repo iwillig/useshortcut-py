@@ -5,10 +5,12 @@ name = "pypi"
 
 [packages]
 requests = "~=2.32.3"
+black = "*"
+pytest = "*"
 
 [dev-packages]
-black = "~=24.4.2"
-pytest = "~=8.3.4"
+black = "~=25.1.0"
+pytest = "~=8.4.0"
 pytest-cov = "*"
 invoke = "~=2.2.0"
 twine = "*"

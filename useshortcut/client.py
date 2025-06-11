@@ -49,9 +49,7 @@ class APIClient:
         return response.json() if response.content else response
 
     def _paginate_results(
-        self,
-        initial_response: models.SearchStoryResult,
-        params: models.SearchInputs
+        self, initial_response: models.SearchStoryResult, params: models.SearchInputs
     ) -> Iterator[models.Story]:
         """Iterate through all pages of search results.
 
@@ -95,7 +93,9 @@ class APIClient:
             self._make_request("GET", "/search/stories", params=params.__dict__)
         )
 
-    def search_stories_iter(self, params: models.SearchInputs) -> Iterator[models.Story]:
+    def search_stories_iter(
+        self, params: models.SearchInputs
+    ) -> Iterator[models.Story]:
         """Search for stories with automatic pagination.
 
         Args:
@@ -349,7 +349,9 @@ class APIClient:
             self._make_request("POST", "/groups", json=params.__dict__)
         )
 
-    def update_group(self, group_id: int, params: models.UpdateGroupInput) -> models.Group:
+    def update_group(
+        self, group_id: int, params: models.UpdateGroupInput
+    ) -> models.Group:
         """Update an existing group.
         Args:
             group_id: The ID of the group to update
@@ -648,3 +650,327 @@ class APIClient:
         self._make_request("DELETE", f"/categories/{category_id}")
 
     ## Custom Fields
+
+    def list_custom_fields(self) -> List[models.CustomField]:
+        """List all custom fields.
+        Returns:
+            List of CustomField objects
+        """
+        data = self._make_request("GET", "/custom-fields")
+        return [models.CustomField.from_json(x) for x in data]
+
+    def get_custom_field(self, custom_field_id: str) -> models.CustomField:
+        """Get a specific custom field by ID.
+        Args:
+            custom_field_id: The UUID of the custom field
+        Returns:
+            CustomField object
+        """
+        data = self._make_request("GET", f"/custom-fields/{custom_field_id}")
+        return models.CustomField.from_json(data)
+
+    def update_custom_field(
+        self, custom_field_id: str, custom_field: models.UpdateCustomFieldInput
+    ) -> models.CustomField:
+        """Update an existing custom field.
+        Args:
+            custom_field_id: The UUID of the custom field to update
+            custom_field: Updated custom field parameters
+        Returns:
+            Updated CustomField object
+        """
+        # Filter out None values and convert values list
+        update_data = {k: v for k, v in custom_field.__dict__.items() if v is not None}
+        if "values" in update_data and update_data["values"]:
+            update_data["values"] = [
+                {k: v for k, v in val.__dict__.items() if v is not None}
+                for val in update_data["values"]
+            ]
+
+        data = self._make_request(
+            "PUT", f"/custom-fields/{custom_field_id}", json=update_data
+        )
+        return models.CustomField.from_json(data)
+
+    def delete_custom_field(self, custom_field_id: str) -> None:
+        """Delete a custom field.
+        Args:
+            custom_field_id: The UUID of the custom field to delete
+        """
+        self._make_request("DELETE", f"/custom-fields/{custom_field_id}")
+
+    ## Story Comments
+
+    def list_story_comments(self, story_id: int) -> List[models.StoryComment]:
+        """List all comments for a story.
+        Args:
+            story_id: The ID of the story
+        Returns:
+            List of StoryComment objects
+        """
+        data = self._make_request("GET", f"/stories/{story_id}/comments")
+        return [models.StoryComment.from_json(x) for x in data]
+
+    def create_story_comment(
+        self, story_id: int, comment: models.CreateStoryCommentInput
+    ) -> models.StoryComment:
+        """Create a new comment on a story.
+        Args:
+            story_id: The ID of the story
+            comment: Comment parameters
+        Returns:
+            Created StoryComment object
+        """
+        data = self._make_request(
+            "POST", f"/stories/{story_id}/comments", json=comment.__dict__
+        )
+        return models.StoryComment.from_json(data)
+
+    def get_story_comment(self, story_id: int, comment_id: int) -> models.StoryComment:
+        """Get a specific comment on a story.
+        Args:
+            story_id: The ID of the story
+            comment_id: The ID of the comment
+        Returns:
+            StoryComment object
+        """
+        data = self._make_request("GET", f"/stories/{story_id}/comments/{comment_id}")
+        return models.StoryComment.from_json(data)
+
+    def update_story_comment(
+        self, story_id: int, comment_id: int, comment: models.UpdateStoryCommentInput
+    ) -> models.StoryComment:
+        """Update a comment on a story.
+        Args:
+            story_id: The ID of the story
+            comment_id: The ID of the comment
+            comment: Updated comment parameters
+        Returns:
+            Updated StoryComment object
+        """
+        data = self._make_request(
+            "PUT", f"/stories/{story_id}/comments/{comment_id}", json=comment.__dict__
+        )
+        return models.StoryComment.from_json(data)
+
+    def delete_story_comment(self, story_id: int, comment_id: int) -> None:
+        """Delete a comment from a story.
+        Args:
+            story_id: The ID of the story
+            comment_id: The ID of the comment
+        """
+        self._make_request("DELETE", f"/stories/{story_id}/comments/{comment_id}")
+
+    ## Epic Comments
+
+    def list_epic_comments(self, epic_id: int) -> List[models.ThreadedComment]:
+        """List all comments for an epic.
+        Args:
+            epic_id: The ID of the epic
+        Returns:
+            List of ThreadedComment objects
+        """
+        data = self._make_request("GET", f"/epics/{epic_id}/comments")
+        return [models.ThreadedComment.from_json(x) for x in data]
+
+    def create_epic_comment(
+        self, epic_id: int, comment: models.CreateStoryCommentInput
+    ) -> models.ThreadedComment:
+        """Create a new comment on an epic.
+        Args:
+            epic_id: The ID of the epic
+            comment: Comment parameters
+        Returns:
+            Created ThreadedComment object
+        """
+        data = self._make_request(
+            "POST", f"/epics/{epic_id}/comments", json=comment.__dict__
+        )
+        return models.ThreadedComment.from_json(data)
+
+    def get_epic_comment(self, epic_id: int, comment_id: int) -> models.ThreadedComment:
+        """Get a specific comment on an epic.
+        Args:
+            epic_id: The ID of the epic
+            comment_id: The ID of the comment
+        Returns:
+            ThreadedComment object
+        """
+        data = self._make_request("GET", f"/epics/{epic_id}/comments/{comment_id}")
+        return models.ThreadedComment.from_json(data)
+
+    def update_epic_comment(
+        self, epic_id: int, comment_id: int, comment: models.UpdateStoryCommentInput
+    ) -> models.ThreadedComment:
+        """Update a comment on an epic.
+        Args:
+            epic_id: The ID of the epic
+            comment_id: The ID of the comment
+            comment: Updated comment parameters
+        Returns:
+            Updated ThreadedComment object
+        """
+        data = self._make_request(
+            "PUT", f"/epics/{epic_id}/comments/{comment_id}", json=comment.__dict__
+        )
+        return models.ThreadedComment.from_json(data)
+
+    def delete_epic_comment(self, epic_id: int, comment_id: int) -> None:
+        """Delete a comment from an epic.
+        Args:
+            epic_id: The ID of the epic
+            comment_id: The ID of the comment
+        """
+        self._make_request("DELETE", f"/epics/{epic_id}/comments/{comment_id}")
+
+    ## Story Tasks
+
+    def list_story_tasks(self, story_id: int) -> List[models.Task]:
+        """List all tasks for a story.
+        Args:
+            story_id: The ID of the story
+        Returns:
+            List of Task objects
+        """
+        data = self._make_request("GET", f"/stories/{story_id}/tasks")
+        return [models.Task.from_json(x) for x in data]
+
+    def create_story_task(
+        self, story_id: int, task: models.CreateTaskInput
+    ) -> models.Task:
+        """Create a new task on a story.
+        Args:
+            story_id: The ID of the story
+            task: Task parameters
+        Returns:
+            Created Task object
+        """
+        data = self._make_request(
+            "POST", f"/stories/{story_id}/tasks", json=task.__dict__
+        )
+        return models.Task.from_json(data)
+
+    def get_story_task(self, story_id: int, task_id: int) -> models.Task:
+        """Get a specific task on a story.
+        Args:
+            story_id: The ID of the story
+            task_id: The ID of the task
+        Returns:
+            Task object
+        """
+        data = self._make_request("GET", f"/stories/{story_id}/tasks/{task_id}")
+        return models.Task.from_json(data)
+
+    def update_story_task(
+        self, story_id: int, task_id: int, task: models.UpdateTaskInput
+    ) -> models.Task:
+        """Update a task on a story.
+        Args:
+            story_id: The ID of the story
+            task_id: The ID of the task
+            task: Updated task parameters
+        Returns:
+            Updated Task object
+        """
+        # Filter out None values from the update
+        update_data = {k: v for k, v in task.__dict__.items() if v is not None}
+        data = self._make_request(
+            "PUT", f"/stories/{story_id}/tasks/{task_id}", json=update_data
+        )
+        return models.Task.from_json(data)
+
+    def delete_story_task(self, story_id: int, task_id: int) -> None:
+        """Delete a task from a story.
+        Args:
+            story_id: The ID of the story
+            task_id: The ID of the task
+        """
+        self._make_request("DELETE", f"/stories/{story_id}/tasks/{task_id}")
+
+    ## Milestones
+
+    def list_milestones(self) -> List[models.Milestone]:
+        """List all milestones.
+        Returns:
+            List of Milestone objects
+        """
+        data = self._make_request("GET", "/milestones")
+        return [models.Milestone.from_json(x) for x in data]
+
+    def get_milestone(self, milestone_id: int) -> models.Milestone:
+        """Get a specific milestone by ID.
+        Args:
+            milestone_id: The ID of the milestone
+        Returns:
+            Milestone object
+        """
+        data = self._make_request("GET", f"/milestones/{milestone_id}")
+        return models.Milestone.from_json(data)
+
+    def create_milestone(
+        self, milestone: models.CreateMilestoneInput
+    ) -> models.Milestone:
+        """Create a new milestone.
+        Args:
+            milestone: Milestone parameters
+        Returns:
+            Created Milestone object
+        """
+        # Convert categories to dict format
+        request_data = milestone.__dict__.copy()
+        if "categories" in request_data and request_data["categories"]:
+            request_data["categories"] = [
+                cat.__dict__ for cat in request_data["categories"]
+            ]
+
+        data = self._make_request("POST", "/milestones", json=request_data)
+        return models.Milestone.from_json(data)
+
+    def update_milestone(
+        self, milestone_id: int, milestone: models.UpdateMilestoneInput
+    ) -> models.Milestone:
+        """Update an existing milestone.
+        Args:
+            milestone_id: The ID of the milestone to update
+            milestone: Updated milestone parameters
+        Returns:
+            Updated Milestone object
+        """
+        # Filter out None values and convert categories
+        update_data = {k: v for k, v in milestone.__dict__.items() if v is not None}
+        if "categories" in update_data and update_data["categories"]:
+            update_data["categories"] = [
+                cat.__dict__ for cat in update_data["categories"]
+            ]
+
+        data = self._make_request(
+            "PUT", f"/milestones/{milestone_id}", json=update_data
+        )
+        return models.Milestone.from_json(data)
+
+    def delete_milestone(self, milestone_id: int) -> None:
+        """Delete a milestone.
+        Args:
+            milestone_id: The ID of the milestone to delete
+        """
+        self._make_request("DELETE", f"/milestones/{milestone_id}")
+
+    def list_milestone_epics(self, milestone_id: int) -> List[models.Epic]:
+        """List all epics associated with a milestone.
+        Args:
+            milestone_id: The ID of the milestone
+        Returns:
+            List of Epic objects
+        """
+        data = self._make_request("GET", f"/milestones/{milestone_id}/epics")
+        return [models.Epic.from_json(x) for x in data]
+
+    def list_category_milestones(self, category_id: int) -> List[models.Milestone]:
+        """List all milestones in a category.
+        Args:
+            category_id: The ID of the category
+        Returns:
+            List of Milestone objects
+        """
+        data = self._make_request("GET", f"/categories/{category_id}/milestones")
+        return [models.Milestone.from_json(x) for x in data]

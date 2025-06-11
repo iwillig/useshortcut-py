@@ -2,7 +2,7 @@ from typing import Optional, List, Dict, Any, TypeVar, Generic
 from dataclasses import dataclass, field
 from datetime import datetime
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 @dataclass
@@ -86,6 +86,70 @@ class Story:
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Story":
         return cls(**data)
+
+
+@dataclass
+class Task:
+    """A Task on a Story."""
+
+    id: int
+    description: str
+    complete: bool
+    story_id: int
+    entity_type: str
+    position: int
+    created_at: datetime
+
+    completed_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    external_id: Optional[str] = None
+    global_id: Optional[str] = None
+
+    owner_ids: List[str] = field(default_factory=list)
+    mention_ids: List[str] = field(default_factory=list)  # Deprecated
+    member_mention_ids: List[str] = field(default_factory=list)
+    group_mention_ids: List[str] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Task":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        if "completed_at" in data and isinstance(data["completed_at"], str):
+            data["completed_at"] = datetime.fromisoformat(
+                data["completed_at"].replace("Z", "+00:00")
+            )
+
+        return cls(**data)
+
+
+@dataclass
+class CreateTaskInput:
+    """Request parameters for creating a Task on a Story."""
+
+    description: str
+    complete: bool = False
+    owner_ids: List[str] = field(default_factory=list)
+    external_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+@dataclass
+class UpdateTaskInput:
+    """Request parameters for updating a Task."""
+
+    description: Optional[str] = None
+    owner_ids: Optional[List[str]] = None
+    complete: Optional[bool] = None
+    before_id: Optional[int] = None
+    after_id: Optional[int] = None
 
 
 @dataclass
@@ -607,12 +671,15 @@ class SearchStoryResult:
 @dataclass
 class PaginatedResponse(Generic[T]):
     """Generic paginated response wrapper for list endpoints."""
+
     data: List[T]
     next: Optional[str] = None
     total: Optional[int] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any], item_class: type[T]) -> "PaginatedResponse[T]":
+    def from_json(
+        cls, data: Dict[str, Any], item_class: type[T]
+    ) -> "PaginatedResponse[T]":
         """Create a PaginatedResponse from JSON data.
 
         Args:
@@ -627,6 +694,319 @@ class PaginatedResponse(Generic[T]):
             result = {
                 "data": [item_class.from_json(item) for item in data.get("data", [])],
                 "next": data.get("next"),
-                "total": data.get("total")
+                "total": data.get("total"),
             }
             return cls(**result)
+
+
+@dataclass
+class StoryReaction:
+    """Emoji reaction on a comment."""
+
+    emoji: str
+    permission_ids: List[str]
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "StoryReaction":
+        return cls(**data)
+
+
+@dataclass
+class StoryComment:
+    """A Comment is any note added within the Comment field of a Story."""
+
+    id: int
+    text: Optional[str]
+    author_id: Optional[str]
+    created_at: datetime
+    entity_type: str
+    story_id: int
+    position: int
+
+    app_url: Optional[str] = None
+    deleted: bool = False
+    updated_at: Optional[datetime] = None
+    external_id: Optional[str] = None
+    parent_id: Optional[int] = None
+    blocker: bool = False
+    unblocks_parent: bool = False
+    linked_to_slack: bool = False
+
+    mention_ids: List[str] = field(default_factory=list)  # Deprecated
+    member_mention_ids: List[str] = field(default_factory=list)
+    group_mention_ids: List[str] = field(default_factory=list)
+    reactions: List[StoryReaction] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "StoryComment":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+
+        # Convert reactions
+        if "reactions" in data:
+            data["reactions"] = [StoryReaction.from_json(r) for r in data["reactions"]]
+
+        return cls(**data)
+
+
+@dataclass
+class CreateStoryCommentInput:
+    """Request parameters for creating a Comment on a Shortcut Story."""
+
+    text: str
+    author_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    external_id: Optional[str] = None
+    parent_id: Optional[int] = None
+
+
+@dataclass
+class UpdateStoryCommentInput:
+    """Request parameters for updating a Comment."""
+
+    text: str
+
+
+@dataclass
+class ThreadedComment:
+    """Comments associated with Epic Discussions."""
+
+    id: int
+    text: str
+    author_id: str
+    created_at: datetime
+    entity_type: str
+
+    app_url: Optional[str] = None
+    deleted: bool = False
+    updated_at: Optional[datetime] = None
+    external_id: Optional[str] = None
+
+    mention_ids: List[str] = field(default_factory=list)  # Deprecated
+    member_mention_ids: List[str] = field(default_factory=list)
+    group_mention_ids: List[str] = field(default_factory=list)
+    comments: List["ThreadedComment"] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "ThreadedComment":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+
+        # Convert nested comments
+        if "comments" in data:
+            data["comments"] = [ThreadedComment.from_json(c) for c in data["comments"]]
+
+        return cls(**data)
+
+
+@dataclass
+class MilestoneStats:
+    """A group of calculated values for this Milestone."""
+
+    num_related_documents: int
+    average_cycle_time: Optional[int] = None
+    average_lead_time: Optional[int] = None
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "MilestoneStats":
+        return cls(**data)
+
+
+@dataclass
+class Milestone:
+    """(Deprecated) A Milestone is a collection of Epics that represent a release or some other large initiative."""
+
+    id: int
+    name: str
+    description: str
+    state: str
+    position: int
+    created_at: datetime
+    updated_at: datetime
+    entity_type: str
+    app_url: str
+    global_id: str
+    stats: MilestoneStats
+
+    archived: bool = False
+    started: bool = False
+    completed: bool = False
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    started_at_override: Optional[datetime] = None
+    completed_at_override: Optional[datetime] = None
+
+    categories: List["Category"] = field(default_factory=list)
+    key_result_ids: List[str] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "Milestone":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        if "started_at" in data and isinstance(data["started_at"], str):
+            data["started_at"] = datetime.fromisoformat(
+                data["started_at"].replace("Z", "+00:00")
+            )
+        if "completed_at" in data and isinstance(data["completed_at"], str):
+            data["completed_at"] = datetime.fromisoformat(
+                data["completed_at"].replace("Z", "+00:00")
+            )
+        if "started_at_override" in data and isinstance(
+            data["started_at_override"], str
+        ):
+            data["started_at_override"] = datetime.fromisoformat(
+                data["started_at_override"].replace("Z", "+00:00")
+            )
+        if "completed_at_override" in data and isinstance(
+            data["completed_at_override"], str
+        ):
+            data["completed_at_override"] = datetime.fromisoformat(
+                data["completed_at_override"].replace("Z", "+00:00")
+            )
+
+        # Convert stats
+        if "stats" in data:
+            data["stats"] = MilestoneStats.from_json(data["stats"])
+
+        # Convert categories - Category class is defined later in this file
+        if "categories" in data:
+            data["categories"] = [Category.from_json(c) for c in data["categories"]]
+
+        return cls(**data)
+
+
+@dataclass
+class CreateCategoryParams:
+    """Parameters for creating or referencing a category."""
+
+    name: str
+    color: Optional[str] = None
+    external_id: Optional[str] = None
+
+
+@dataclass
+class CreateMilestoneInput:
+    """Request parameters for creating a Milestone."""
+
+    name: str
+    description: Optional[str] = None
+    state: Optional[str] = "to do"  # Enum: "in progress", "to do", "done"
+    started_at_override: Optional[datetime] = None
+    completed_at_override: Optional[datetime] = None
+    categories: List[CreateCategoryParams] = field(default_factory=list)
+
+
+@dataclass
+class UpdateMilestoneInput:
+    """Request parameters for updating a Milestone."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    state: Optional[str] = None  # Enum: "in progress", "to do", "done"
+    archived: Optional[bool] = None
+    started_at_override: Optional[datetime] = None
+    completed_at_override: Optional[datetime] = None
+    categories: Optional[List[CreateCategoryParams]] = None
+    before_id: Optional[int] = None
+    after_id: Optional[int] = None
+
+
+@dataclass
+class CustomFieldEnumValue:
+    """A value within the domain of a Custom Field."""
+
+    id: str
+    value: str
+    position: int
+    entity_type: str = "custom-field-enum-value"
+    color_key: Optional[str] = None
+    enabled: bool = True
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "CustomFieldEnumValue":
+        return cls(**data)
+
+
+@dataclass
+class CustomField:
+    """A custom field that can be applied to stories."""
+
+    id: str
+    name: str
+    field_type: str  # Currently only "enum"
+    position: int
+    enabled: bool
+    created_at: datetime
+    updated_at: datetime
+    entity_type: str = "custom-field"
+
+    description: Optional[str] = None
+    icon_set_identifier: Optional[str] = None
+    canonical_name: Optional[str] = None
+    fixed_position: bool = False
+
+    story_types: List[str] = field(default_factory=list)
+    values: List[CustomFieldEnumValue] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> "CustomField":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+
+        # Convert values
+        if "values" in data:
+            data["values"] = [CustomFieldEnumValue.from_json(v) for v in data["values"]]
+
+        return cls(**data)
+
+
+@dataclass
+class UpdateCustomFieldEnumValue:
+    """Parameters for updating a custom field enum value."""
+
+    id: Optional[str] = None
+    value: Optional[str] = None
+    color_key: Optional[str] = None
+    enabled: Optional[bool] = None
+
+
+@dataclass
+class UpdateCustomFieldInput:
+    """Request parameters for updating a Custom Field."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    enabled: Optional[bool] = None
+    icon_set_identifier: Optional[str] = None
+    values: Optional[List[UpdateCustomFieldEnumValue]] = None
+    before_id: Optional[str] = None
+    after_id: Optional[str] = None

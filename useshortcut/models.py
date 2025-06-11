@@ -9,6 +9,34 @@ T = TypeVar("T")
 class StoryInput:
     name: str
     workflow_state_id: int
+    description: Optional[str] = None
+    story_type: Optional[str] = "feature"
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    label_ids: Optional[List[int]] = None
+
+
+@dataclass
+class UpdateStoryInput:
+    name: Optional[str] = None
+    description: Optional[str] = None
+    workflow_state_id: Optional[int] = None
+    story_type: Optional[str] = None
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    label_ids: Optional[List[int]] = None
+    owner_ids: Optional[List[str]] = None
+    follower_ids: Optional[List[str]] = None
+    archived: Optional[bool] = None
+    deadline: Optional[datetime] = None
+    estimate: Optional[int] = None
+    requested_by_id: Optional[str] = None
+    iteration_id: Optional[int] = None
+    completed_at_override: Optional[datetime] = None
+    started_at_override: Optional[datetime] = None
+    group_id: Optional[str] = None
+    before_id: Optional[int] = None
+    after_id: Optional[int] = None
 
 
 @dataclass
@@ -80,11 +108,26 @@ class Story:
     stats: Optional[Dict[str, Any]] = None
     lead_time: Optional[int] = None
     cycle_time: Optional[int] = None
+    formatted_vcs_branch_name: Optional[str] = None
 
     entity_type: str = "story"
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Story":
+        # Convert datetime strings
+        date_fields = [
+            "created_at",
+            "updated_at",
+            "deadline",
+            "moved_at",
+            "completed_at",
+            "completed_at_override",
+            "started_at",
+            "started_at_override",
+        ]
+        for field in date_fields:
+            if field in data and isinstance(data[field], str):
+                data[field] = datetime.fromisoformat(data[field].replace("Z", "+00:00"))
         return cls(**data)
 
 
@@ -153,8 +196,40 @@ class UpdateTaskInput:
 
 
 @dataclass
-class EpicInput:
+class CreateEpicInput:
     name: str
+    description: Optional[str] = None
+    state: Optional[str] = "to do"
+    milestone_id: Optional[int] = None
+    requested_by_id: Optional[str] = None
+    group_id: Optional[str] = None
+    owner_ids: Optional[List[str]] = None
+    follower_ids: Optional[List[str]] = None
+    label_ids: Optional[List[int]] = None
+    planned_start_date: Optional[datetime] = None
+    deadline: Optional[datetime] = None
+
+
+@dataclass
+class UpdateEpicInput:
+    name: Optional[str] = None
+    description: Optional[str] = None
+    state: Optional[str] = None
+    milestone_id: Optional[int] = None
+    requested_by_id: Optional[str] = None
+    group_id: Optional[str] = None
+    owner_ids: Optional[List[str]] = None
+    follower_ids: Optional[List[str]] = None
+    label_ids: Optional[List[int]] = None
+    planned_start_date: Optional[datetime] = None
+    deadline: Optional[datetime] = None
+    archived: Optional[bool] = None
+    before_id: Optional[int] = None
+    after_id: Optional[int] = None
+
+
+# Alias for backward compatibility
+EpicInput = CreateEpicInput
 
 
 @dataclass
@@ -202,20 +277,72 @@ class Epic:
     mention_ids: Optional[List[str]] = field(default_factory=list)
     member_mention_ids: Optional[List[str]] = field(default_factory=list)
     associated_groups: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    comments: Optional[List[Dict[str, Any]]] = field(default_factory=list)
     stats: Optional[Any] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Epic":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        if "deadline" in data and isinstance(data["deadline"], str):
+            data["deadline"] = datetime.fromisoformat(
+                data["deadline"].replace("Z", "+00:00")
+            )
+        if "started_at" in data and isinstance(data["started_at"], str):
+            data["started_at"] = datetime.fromisoformat(
+                data["started_at"].replace("Z", "+00:00")
+            )
+        if "completed_at" in data and isinstance(data["completed_at"], str):
+            data["completed_at"] = datetime.fromisoformat(
+                data["completed_at"].replace("Z", "+00:00")
+            )
+        if "completed_at_override" in data and isinstance(
+            data["completed_at_override"], str
+        ):
+            data["completed_at_override"] = datetime.fromisoformat(
+                data["completed_at_override"].replace("Z", "+00:00")
+            )
+        if "started_at_override" in data and isinstance(
+            data["started_at_override"], str
+        ):
+            data["started_at_override"] = datetime.fromisoformat(
+                data["started_at_override"].replace("Z", "+00:00")
+            )
+        if "planned_start_date" in data and isinstance(data["planned_start_date"], str):
+            data["planned_start_date"] = datetime.fromisoformat(
+                data["planned_start_date"].replace("Z", "+00:00")
+            )
         return cls(**data)
 
 
 @dataclass
 class EpicWorkflow:
     id: int
+    default_epic_state_id: int
+    epic_states: List[Dict[str, Any]]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    entity_type: str = "epic-workflow"
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "EpicWorkflow":
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        return cls(**data)
 
 
 @dataclass
@@ -223,11 +350,21 @@ class CreateIterationInput:
     name: str
     start_date: str
     end_date: str
+    description: Optional[str] = None
+    follower_ids: Optional[List[str]] = None
+    group_ids: Optional[List[str]] = None
+    label_ids: Optional[List[int]] = None
 
 
 @dataclass
 class UpdateIterationInput:
     name: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    follower_ids: Optional[List[str]] = None
+    group_ids: Optional[List[str]] = None
+    label_ids: Optional[List[int]] = None
 
 
 @dataclass
@@ -238,6 +375,7 @@ class Iteration:
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     status: str = "unstarted"  # enum
+    description: Optional[str] = None
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -258,6 +396,23 @@ class Iteration:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Iteration":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        if "start_date" in data and isinstance(data["start_date"], str):
+            data["start_date"] = datetime.fromisoformat(
+                data["start_date"].replace("Z", "+00:00")
+            )
+        if "end_date" in data and isinstance(data["end_date"], str):
+            data["end_date"] = datetime.fromisoformat(
+                data["end_date"].replace("Z", "+00:00")
+            )
         return cls(**data)
 
 
@@ -370,6 +525,14 @@ class CreateLabelInput:
 
 
 @dataclass
+class UpdateLabelInput:
+    name: Optional[str] = None
+    description: Optional[str] = None
+    color: Optional[str] = None
+    archived: Optional[bool] = None
+
+
+@dataclass
 class Label:
     id: int
     name: str
@@ -386,6 +549,15 @@ class Label:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Label":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
         return cls(**data)
 
 
@@ -601,6 +773,9 @@ class Workflow:
 @dataclass
 class CreateCategoryInput:
     name: str
+    type: str = "milestone"
+    color: Optional[str] = None
+    external_id: Optional[str] = None
 
 
 @dataclass
@@ -624,12 +799,27 @@ class Category:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Category":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
         return cls(**data)
 
 
 @dataclass
 class CreateProjectInput:
     name: str
+    abbreviation: Optional[str] = None
+    color: Optional[str] = None
+    description: Optional[str] = None
+    external_id: Optional[str] = None
+    follower_ids: Optional[List[str]] = None
+    team_id: Optional[int] = None
 
 
 @dataclass
@@ -641,12 +831,37 @@ class UpdateProjectInput:
 class Project:
     id: int
     name: str
+    app_url: Optional[str] = None
+    archived: bool = False
+    entity_type: str = "project"
+    color: Optional[str] = None
+    abbreviation: Optional[str] = None
+    description: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    follower_ids: List[str] = field(default_factory=list)
+    external_id: Optional[str] = None
+    team_id: Optional[int] = None
+    iteration_length: Optional[int] = None
+    start_time: Optional[datetime] = None
+    stats: Optional[Dict[str, Any]] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Project":
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        if "start_time" in data and isinstance(data["start_time"], str):
+            data["start_time"] = datetime.fromisoformat(
+                data["start_time"].replace("Z", "+00:00")
+            )
+        return cls(**data)
 
 
 @dataclass
@@ -776,6 +991,11 @@ class UpdateStoryCommentInput:
     text: str
 
 
+# Aliases for consistency with other endpoints
+CreateCommentInput = CreateStoryCommentInput
+UpdateCommentInput = UpdateStoryCommentInput
+
+
 @dataclass
 class ThreadedComment:
     """Comments associated with Epic Discussions."""
@@ -902,9 +1122,10 @@ class Milestone:
 class CreateCategoryParams:
     """Parameters for creating or referencing a category."""
 
-    name: str
+    name: Optional[str] = None  # Optional when using id
     color: Optional[str] = None
     external_id: Optional[str] = None
+    id: Optional[int] = None  # For referencing existing categories
 
 
 @dataclass

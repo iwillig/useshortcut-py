@@ -5,6 +5,11 @@ import useshortcut.models as models
 JSON = Union[Dict[str, Any], List[Dict[str, Any]]]
 
 
+def _clean_dict(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Remove None values from a dictionary."""
+    return {k: v for k, v in data.items() if v is not None}
+
+
 class APIClient:
     """Client for interacting with the Shortcut API v3."""
 
@@ -47,10 +52,6 @@ class APIClient:
         response = self.session.request(method, url, **kwargs)
         response.raise_for_status()
         return response.json() if response.content else response
-
-    def _clean_dict(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Remove None values from a dictionary."""
-        return {k: v for k, v in data.items() if v is not None}
 
     def _paginate_results(
         self, initial_response: models.SearchStoryResult, params: models.SearchInputs
@@ -111,16 +112,14 @@ class APIClient:
         initial_response = self.search_stories(params)
         return self._paginate_results(initial_response, params)
 
-    def create_story(self, story: models.StoryInput) -> models.Story:
+    def create_story(self, story: models.CreateStoryParams) -> models.Story:
         """Create a new story.
         Args:
             story: Story object with the story details
         Returns:
             Created Story object
         """
-        data = self._make_request(
-            "POST", "/stories", json=self._clean_dict(story.__dict__)
-        )
+        data = self._make_request("POST", "/stories", json=_clean_dict(story.__dict__))
         return models.Story.from_json(data)
 
     def get_story(self, story_id: int) -> models.Story:
@@ -145,7 +144,7 @@ class APIClient:
             Updated Story object
         """
         data = self._make_request(
-            "PUT", f"/stories/{story_id}", json=self._clean_dict(story.__dict__)
+            "PUT", f"/stories/{story_id}", json=_clean_dict(story.__dict__)
         )
         return models.Story.from_json(data)
 
@@ -199,9 +198,7 @@ class APIClient:
         Returns:
             Created Epic object
         """
-        data = self._make_request(
-            "POST", "/epics", json=self._clean_dict(epic.__dict__)
-        )
+        data = self._make_request("POST", "/epics", json=_clean_dict(epic.__dict__))
         return models.Epic.from_json(data)
 
     def update_epic(self, epic_id: int, epic: models.UpdateEpicInput) -> models.Epic:
@@ -214,7 +211,7 @@ class APIClient:
             Updated Epic object
         """
         data = self._make_request(
-            "PUT", f"/epics/{epic_id}", json=self._clean_dict(epic.__dict__)
+            "PUT", f"/epics/{epic_id}", json=_clean_dict(epic.__dict__)
         )
         return models.Epic.from_json(data)
 
@@ -256,7 +253,7 @@ class APIClient:
             Created Iteration object
         """
         data = self._make_request(
-            "POST", "/iterations", json=self._clean_dict(iteration.__dict__)
+            "POST", "/iterations", json=_clean_dict(iteration.__dict__)
         )
         return models.Iteration.from_json(data)
 
@@ -274,7 +271,7 @@ class APIClient:
         data = self._make_request(
             "PUT",
             f"/iterations/{iteration_id}",
-            json=self._clean_dict(iteration.__dict__),
+            json=_clean_dict(iteration.__dict__),
         )
         return models.Iteration.from_json(data)
 
@@ -298,7 +295,7 @@ class APIClient:
             Story Link object
         """
         data = self._make_request(
-            "POST", "/story-links", json=self._clean_dict(params.__dict__)
+            "POST", "/story-links", json=_clean_dict(params.__dict__)
         )
         return [models.StoryLink.from_json(story_link) for story_link in data]
 
@@ -326,7 +323,7 @@ class APIClient:
         data = self._make_request(
             "PUT",
             f"/story-links/{story_link_id}",
-            json=self._clean_dict(params.__dict__),
+            json=_clean_dict(params.__dict__),
         )
         return models.StoryLink.from_json(data)
 
@@ -368,9 +365,7 @@ class APIClient:
             Group object
         """
         return models.Group.from_json(
-            self._make_request(
-                "POST", "/groups", json=self._clean_dict(params.__dict__)
-            )
+            self._make_request("POST", "/groups", json=_clean_dict(params.__dict__))
         )
 
     def update_group(
@@ -385,7 +380,7 @@ class APIClient:
         """
         return models.Group.from_json(
             self._make_request(
-                "PUT", f"/groups/{group_id}", json=self._clean_dict(params.__dict__)
+                "PUT", f"/groups/{group_id}", json=_clean_dict(params.__dict__)
             )
         )
 
@@ -425,7 +420,7 @@ class APIClient:
         data = self._make_request(
             "PUT",
             f"/key-results/{key_result_id}",
-            json=self._clean_dict(params.__dict__),
+            json=_clean_dict(params.__dict__),
         )
         return models.KeyResult.from_json(data)
 
@@ -457,9 +452,7 @@ class APIClient:
         Returns:
             The new Label object
         """
-        data = self._make_request(
-            "POST", "/labels", json=self._clean_dict(params.__dict__)
-        )
+        data = self._make_request("POST", "/labels", json=_clean_dict(params.__dict__))
         return models.Label.from_json(data)
 
     def update_label(
@@ -474,7 +467,7 @@ class APIClient:
             Updated Label object
         """
         data = self._make_request(
-            "PUT", f"/labels/{label_id}", json=self._clean_dict(params.__dict__)
+            "PUT", f"/labels/{label_id}", json=_clean_dict(params.__dict__)
         )
         return models.Label.from_json(data)
 
@@ -509,7 +502,7 @@ class APIClient:
         """
         return models.LinkedFiles.from_json(
             self._make_request(
-                "POST", "/linked-files", json=self._clean_dict(params.__dict__)
+                "POST", "/linked-files", json=_clean_dict(params.__dict__)
             )
         )
 
@@ -529,7 +522,7 @@ class APIClient:
             self._make_request(
                 "PUT",
                 f"/linked-files/{linked_file_id}",
-                json=self._clean_dict(params.__dict__),
+                json=_clean_dict(params.__dict__),
             )
         )
 
@@ -574,7 +567,7 @@ class APIClient:
         """
         return models.File.from_json(
             self._make_request(
-                "PUT", f"/files/{file_id}", json=self._clean_dict(params.__dict__)
+                "PUT", f"/files/{file_id}", json=_clean_dict(params.__dict__)
             )
         )
 
@@ -621,7 +614,7 @@ class APIClient:
 
     def create_objective(self, params: models.CreateObjectiveInput) -> models.Objective:
         data = self._make_request(
-            "POST", "/objectives", json=self._clean_dict(params.__dict__)
+            "POST", "/objectives", json=_clean_dict(params.__dict__)
         )
         return models.Objective.from_json(data)
 
@@ -629,7 +622,7 @@ class APIClient:
         self, objective_id: int, params: models.UpdateObjectiveInput
     ) -> models.Objective:
         data = self._make_request(
-            "PUT", f"/objectives/{objective_id}", json=self._clean_dict(params.__dict__)
+            "PUT", f"/objectives/{objective_id}", json=_clean_dict(params.__dict__)
         )
         return models.Objective.from_json(data)
 
@@ -657,7 +650,7 @@ class APIClient:
         self, project_id: int, params: models.UpdateProjectInput
     ) -> models.Project:
         data = self._make_request(
-            "PUT", f"/projects/{project_id}", json=self._clean_dict(params.__dict__)
+            "PUT", f"/projects/{project_id}", json=_clean_dict(params.__dict__)
         )
         return models.Project.from_json(data)
 
@@ -692,7 +685,7 @@ class APIClient:
 
     def create_category(self, params: models.CreateCategoryInput) -> models.Category:
         data = self._make_request(
-            "POST", "/categories", json=self._clean_dict(params.__dict__)
+            "POST", "/categories", json=_clean_dict(params.__dict__)
         )
         return models.Category.from_json(data)
 
@@ -700,7 +693,7 @@ class APIClient:
         self, category_id: int, params: models.UpdateCategoryInput
     ) -> models.Category:
         data = self._make_request(
-            "PUT", f"/categories/{category_id}", json=self._clean_dict(params.__dict__)
+            "PUT", f"/categories/{category_id}", json=_clean_dict(params.__dict__)
         )
         return models.Category.from_json(data)
 
@@ -739,6 +732,7 @@ class APIClient:
         """
         # Filter out None values and convert values list
         update_data = {k: v for k, v in custom_field.__dict__.items() if v is not None}
+        ## TOD (Ivan) Review this
         if "values" in update_data and update_data["values"]:
             update_data["values"] = [
                 {k: v for k, v in val.__dict__.items() if v is not None}
@@ -782,7 +776,7 @@ class APIClient:
         data = self._make_request(
             "POST",
             f"/stories/{story_id}/comments",
-            json=self._clean_dict(comment.__dict__),
+            json=_clean_dict(comment.__dict__),
         )
         return models.StoryComment.from_json(data)
 
@@ -811,7 +805,7 @@ class APIClient:
         data = self._make_request(
             "PUT",
             f"/stories/{story_id}/comments/{comment_id}",
-            json=self._clean_dict(comment.__dict__),
+            json=_clean_dict(comment.__dict__),
         )
         return models.StoryComment.from_json(data)
 
@@ -848,7 +842,7 @@ class APIClient:
         data = self._make_request(
             "POST",
             f"/epics/{epic_id}/comments",
-            json=self._clean_dict(comment.__dict__),
+            json=_clean_dict(comment.__dict__),
         )
         return models.ThreadedComment.from_json(data)
 
@@ -877,7 +871,7 @@ class APIClient:
         data = self._make_request(
             "PUT",
             f"/epics/{epic_id}/comments/{comment_id}",
-            json=self._clean_dict(comment.__dict__),
+            json=_clean_dict(comment.__dict__),
         )
         return models.ThreadedComment.from_json(data)
 
@@ -912,7 +906,7 @@ class APIClient:
             Created Task object
         """
         data = self._make_request(
-            "POST", f"/stories/{story_id}/tasks", json=self._clean_dict(task.__dict__)
+            "POST", f"/stories/{story_id}/tasks", json=_clean_dict(task.__dict__)
         )
         return models.Task.from_json(data)
 
@@ -983,10 +977,10 @@ class APIClient:
             Created Milestone object
         """
         # Convert categories to dict format
-        request_data = self._clean_dict(milestone.__dict__.copy())
+        request_data = _clean_dict(milestone.__dict__.copy())
         if "categories" in request_data and request_data["categories"]:
             request_data["categories"] = [
-                self._clean_dict(cat.__dict__) for cat in request_data["categories"]
+                _clean_dict(cat.__dict__) for cat in request_data["categories"]
             ]
 
         data = self._make_request("POST", "/milestones", json=request_data)

@@ -23,7 +23,9 @@ class TestStoryOperations:
 
     def test_create_story(self, requests_mock, api_client, base_url):
         """Test creating a story."""
-        story_input = models.StoryInput(name="Test Story", workflow_state_id=500000)
+        story_input = models.CreateStoryParams(
+            name="Test Story", workflow_state_id=500000
+        )
 
         story_response = {"id": 1001, "name": "Test Story", "workflow_state_id": 500000}
 
@@ -108,7 +110,9 @@ class TestAPIErrors:
         requests_mock.post(f"{base_url}/stories", status_code=500)
 
         with pytest.raises(requests.exceptions.HTTPError) as exc_info:
-            api_client.create_story(models.StoryInput(name="Test", workflow_state_id=1))
+            api_client.create_story(
+                models.CreateStoryParams(name="Test", workflow_state_id=1)
+            )
 
         assert exc_info.value.response.status_code == 500
 

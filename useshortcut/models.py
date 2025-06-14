@@ -6,14 +6,45 @@ T = TypeVar("T")
 
 
 @dataclass
-class StoryInput:
+class CreateStoryParams:
+    """Request parameters for creating a story."""
+
+    # Required fields
     name: str
     workflow_state_id: int
+
+    # Optional fields
     description: Optional[str] = None
     story_type: Optional[str] = "feature"
     project_id: Optional[int] = None
     epic_id: Optional[int] = None
     label_ids: Optional[List[int]] = None
+    archived: Optional[bool] = None
+    story_links: Optional[List[Dict[str, Any]]] = None
+    labels: Optional[List[Dict[str, Any]]] = None
+    custom_fields: Optional[List[Dict[str, Any]]] = None
+    move_to: Optional[str] = None
+    file_ids: Optional[List[int]] = None
+    source_task_id: Optional[int] = None
+    completed_at_override: Optional[datetime] = None
+    comments: Optional[List[Dict[str, Any]]] = None
+    story_template_id: Optional[str] = None
+    external_links: Optional[List[str]] = None
+    sub_tasks: Optional[List[Dict[str, Any]]] = None
+    requested_by_id: Optional[str] = None
+    iteration_id: Optional[int] = None
+    tasks: Optional[List[Dict[str, Any]]] = None
+    started_at_override: Optional[datetime] = None
+    group_id: Optional[str] = None
+    updated_at: Optional[datetime] = None
+    follower_ids: Optional[List[str]] = None
+    owner_ids: Optional[List[str]] = None
+    external_id: Optional[str] = None
+    parent_story_id: Optional[int] = None
+    estimate: Optional[int] = None
+    linked_file_ids: Optional[List[int]] = None
+    deadline: Optional[datetime] = None
+    created_at: Optional[datetime] = None
 
 
 @dataclass

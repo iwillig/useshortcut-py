@@ -22,7 +22,7 @@ The main client class that provides methods for all Shortcut API operations:
 
 ### Models (`useshortcut/models.py`)
 Dataclasses representing Shortcut entities:
-- `Story`, `StoryInput` - Story management
+- `Story`, `CreateStoryParams` - Story management
 - `Epic` - Epic tracking
 - `Project` - Project organization
 - `WorkflowState` - Workflow states
@@ -89,7 +89,7 @@ Note: The project was migrated from Poetry to use standard setuptools with Pipen
 ## Common Tasks
 1. **Creating a story**:
    ```python
-   story = client.create_story(models.StoryInput(
+   story = client.create_story(models.CreateStoryParams(
        name="New Feature",
        workflow_state_id=workflow_state_id
    ))

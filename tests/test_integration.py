@@ -228,7 +228,7 @@ class TestStories:
     ):
         """Test creating a story."""
         story_name = f"{TEST_PREFIX}Story_{TEST_TIMESTAMP}"
-        story_input = models.StoryInput(
+        story_input = models.CreateStoryParams(
             name=story_name,
             description="Test story created by integration tests",
             workflow_state_id=default_workflow_state_id,
@@ -249,7 +249,7 @@ class TestStories:
         # Create a story first
         story_name = f"{TEST_PREFIX}GetStory_{TEST_TIMESTAMP}"
         created_story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=story_name, workflow_state_id=default_workflow_state_id
             )
         )
@@ -268,7 +268,7 @@ class TestStories:
         # Create a story first
         original_name = f"{TEST_PREFIX}UpdateStory_Original_{TEST_TIMESTAMP}"
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=original_name, workflow_state_id=default_workflow_state_id
             )
         )
@@ -292,7 +292,7 @@ class TestStories:
         # Create a story first
         story_name = f"{TEST_PREFIX}DeleteStory_{TEST_TIMESTAMP}"
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=story_name, workflow_state_id=default_workflow_state_id
             )
         )
@@ -338,7 +338,7 @@ class TestStories:
         # Create a story with the label
         story_name = f"{TEST_PREFIX}StoryWithLabel_{TEST_TIMESTAMP}"
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=story_name,
                 workflow_state_id=default_workflow_state_id,
                 label_ids=[label.id],
@@ -355,7 +355,7 @@ class TestStories:
         """Test creating a story in a specific project."""
         story_name = f"{TEST_PREFIX}StoryInProject_{TEST_TIMESTAMP}"
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=story_name,
                 workflow_state_id=default_workflow_state_id,
                 project_id=test_project.id,
@@ -876,7 +876,7 @@ class TestSearchAndPagination:
         # Create a few stories for the test
         for i in range(3):
             story = api_client.create_story(
-                models.StoryInput(
+                models.CreateStoryParams(
                     name=f"{TEST_PREFIX}PaginatedStory_{i}_{TEST_TIMESTAMP}",
                     workflow_state_id=default_workflow_state_id,
                     project_id=test_project.id,
@@ -934,7 +934,7 @@ class TestTasks:
         # Create a story first
         story_name = f"{TEST_PREFIX}StoryWithTask_{TEST_TIMESTAMP}"
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=story_name, workflow_state_id=default_workflow_state_id
             )
         )
@@ -957,7 +957,7 @@ class TestTasks:
         """Test getting a specific task."""
         # Create a story and task first
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=f"{TEST_PREFIX}StoryGetTask_{TEST_TIMESTAMP}",
                 workflow_state_id=default_workflow_state_id,
             )
@@ -980,7 +980,7 @@ class TestTasks:
         """Test updating a task."""
         # Create a story and task first
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=f"{TEST_PREFIX}StoryUpdateTask_{TEST_TIMESTAMP}",
                 workflow_state_id=default_workflow_state_id,
             )
@@ -1006,7 +1006,7 @@ class TestTasks:
         """Test deleting a task."""
         # Create a story and task first
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=f"{TEST_PREFIX}StoryDeleteTask_{TEST_TIMESTAMP}",
                 workflow_state_id=default_workflow_state_id,
             )
@@ -1036,7 +1036,7 @@ class TestComments:
         # Create a story first
         story_name = f"{TEST_PREFIX}StoryWithComment_{TEST_TIMESTAMP}"
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=story_name, workflow_state_id=default_workflow_state_id
             )
         )
@@ -1056,7 +1056,7 @@ class TestComments:
         """Test getting a specific comment."""
         # Create a story and comment first
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=f"{TEST_PREFIX}StoryGetComment_{TEST_TIMESTAMP}",
                 workflow_state_id=default_workflow_state_id,
             )
@@ -1079,7 +1079,7 @@ class TestComments:
         """Test updating a comment."""
         # Create a story and comment first
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=f"{TEST_PREFIX}StoryUpdateComment_{TEST_TIMESTAMP}",
                 workflow_state_id=default_workflow_state_id,
             )
@@ -1105,7 +1105,7 @@ class TestComments:
         """Test deleting a comment."""
         # Create a story and comment first
         story = api_client.create_story(
-            models.StoryInput(
+            models.CreateStoryParams(
                 name=f"{TEST_PREFIX}StoryDeleteComment_{TEST_TIMESTAMP}",
                 workflow_state_id=default_workflow_state_id,
             )

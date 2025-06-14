@@ -1,5 +1,5 @@
 from useshortcut.client import APIClient
-from useshortcut.models import StoryInput, CreateCategoryInput
+from useshortcut.models import CreateStoryParams, CreateCategoryInput
 import useshortcut.models as models
 import requests
 import os
@@ -95,7 +95,7 @@ def test_answer():
 #             print(story.name)
 
 #         story = client.create_story(
-#             models.StoryInput(
+#             models.CreateStoryParams(
 #                 name="Test Story", workflow_state_id=workflow.default_state_id
 #             ),
 #         )

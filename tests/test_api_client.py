@@ -117,7 +117,7 @@ class TestStoryEndpoints:
     """Test Story-related endpoints."""
 
     def test_create_story(self, requests_mock, api_client, base_url):
-        story_input = models.StoryInput(name="Test Story", workflow_state_id=500000)
+        story_input = models.CreateStoryParams(name="Test Story", workflow_state_id=500000)
 
         story_response = {
             "id": 1001,
@@ -469,7 +469,7 @@ class TestErrorHandling:
 
         with pytest.raises(requests.exceptions.HTTPError):
             api_client.create_story(
-                models.StoryInput(name="", workflow_state_id=500000)
+                models.CreateStoryParams(name="", workflow_state_id=500000)
             )
 
     def test_401_unauthorized(self, requests_mock, api_client, base_url):

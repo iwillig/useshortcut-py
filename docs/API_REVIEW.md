@@ -76,7 +76,7 @@ Many models lack the `from_json` classmethod for deserialization:
 - ❌ Label, WorkflowState, Member, Group
 - ❌ File, LinkedFiles, Repository
 - ❌ Category, Objective, KeyResult
-- ❌ Most input models (StoryInput, CreateGroupInput, etc.)
+- ❌ Most input models (CreateStoryParams, CreateGroupInput, etc.)
 
 ### 2. Inconsistent Field Types
 - Story model has many fields as `Optional[Any]` that should be specific types

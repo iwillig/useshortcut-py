@@ -732,6 +732,7 @@ class APIClient:
         """
         # Filter out None values and convert values list
         update_data = {k: v for k, v in custom_field.__dict__.items() if v is not None}
+        ## TOD (Ivan) Review this
         if "values" in update_data and update_data["values"]:
             update_data["values"] = [
                 {k: v for k, v in val.__dict__.items() if v is not None}

@@ -15,7 +15,7 @@ def test(c: Context, verbose: bool = False):
 
 
 @task
-def format(c: Context, check: bool = False):
+def fmt(c: Context, check: bool = False):
     """Format code with black"""
     cmd = "pipenv run black ."
     if check:

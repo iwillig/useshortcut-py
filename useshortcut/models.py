@@ -856,6 +856,7 @@ class CreateProjectInput:
 @dataclass
 class UpdateProjectInput:
     name: Optional[str] = None
+    description: Optional[str] = None
 
 
 @dataclass

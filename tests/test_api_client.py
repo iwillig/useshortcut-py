@@ -36,7 +36,7 @@ class TestAPIClient:
             client.session.headers["Content-Type"] == "application/json; charset=utf-8"
         )
         assert client.session.headers["Accept"] == "application/json; charset=utf-8"
-        assert client.session.headers["User-Agent"] == "useshortcut-py/0.0.1"
+        assert client.session.headers["User-Agent"] == "useshortcut-py/0.0.5"
 
 
 class TestMemberEndpoints:

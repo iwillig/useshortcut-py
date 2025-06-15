@@ -28,7 +28,7 @@ class APIClient:
                 "Content-Type": "application/json; charset=utf-8",
                 "Shortcut-Token": api_token,
                 "Accept": "application/json; charset=utf-8",
-                "User-Agent": "useshortcut-py/0.0.1",
+                "User-Agent": "useshortcut-py/0.0.5",
             }
         )
 

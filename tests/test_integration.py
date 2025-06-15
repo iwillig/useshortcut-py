@@ -105,6 +105,98 @@ def iteration(api_client, iteration_input):
     api_client.delete_iteration(iteration.id)
 
 
+@pytest.fixture
+def label_name():
+    return fake.word()
+
+
+@pytest.fixture
+def label_input(label_name):
+    label_input = models.CreateLabelInput(
+        name=label_name,
+        color="#ff0000",
+    )
+    return label_input
+
+
+@pytest.fixture
+def label(api_client, label_input):
+    label = api_client.create_label(label_input)
+    yield label
+    api_client.delete_label(label.id)
+
+
+@pytest.fixture
+def milestone_name():
+    return fake.text()
+
+
+@pytest.fixture
+def milestone_input(milestone_name):
+    milestone_input = models.CreateMilestoneInput(
+        name=milestone_name,
+        description="Test milestone created by integration tests",
+    )
+    return milestone_input
+
+
+@pytest.fixture
+def milestone(api_client, milestone_input):
+    milestone = api_client.create_milestone(milestone_input)
+    yield milestone
+    api_client.delete_milestone(milestone.id)
+
+
+@pytest.fixture
+def group(api_client):
+    """Get the first available group for testing."""
+    groups = api_client.list_groups()
+    if not groups:
+        pytest.skip("No groups available")
+    return groups[0]
+
+
+@pytest.fixture
+def task_description():
+    return fake.text()
+
+
+@pytest.fixture
+def task_input(task_description):
+    task_input = models.CreateTaskInput(
+        description=task_description,
+        complete=False,
+    )
+    return task_input
+
+
+@pytest.fixture
+def task(api_client, story, task_input):
+    task = api_client.create_story_task(story.id, task_input)
+    yield task
+    api_client.delete_story_task(story.id, task.id)
+
+
+@pytest.fixture
+def comment_text():
+    return fake.text()
+
+
+@pytest.fixture
+def comment_input(comment_text):
+    comment_input = models.CreateCommentInput(
+        text=comment_text,
+    )
+    return comment_input
+
+
+@pytest.fixture
+def comment(api_client, story, comment_input):
+    comment = api_client.create_story_comment(story.id, comment_input)
+    yield comment
+    api_client.delete_story_comment(story.id, comment.id)
+
+
 @pytest.mark.integration
 class TestStories:
 
@@ -157,6 +249,86 @@ class TestIterations:
         )
         updated_iteration = api_client.update_iteration(iteration.id, iteration_input)
         assert updated_iteration.name == new_name
+
+
+@pytest.mark.integration
+class TestLabels:
+
+    def test_create_label(self, api_client, label, label_input):
+        assert label is not None
+        assert label.name == label_input.name
+        assert label.color == "#ff0000"
+
+    def test_update_label(self, api_client, label):
+        new_name = fake.word()
+        label_input = models.UpdateLabelInput(
+            name=new_name,
+            color="#00ff00",
+        )
+        updated_label = api_client.update_label(label.id, label_input)
+        assert updated_label.name == new_name
+        assert updated_label.color == "#00ff00"
+
+
+@pytest.mark.integration
+class TestMilestones:
+
+    def test_create_milestone(self, api_client, milestone, milestone_input):
+        assert milestone is not None
+        assert milestone.name == milestone_input.name
+        assert milestone.description == "Test milestone created by integration tests"
+
+    def test_update_milestone(self, api_client, milestone):
+        new_name = fake.word()
+        milestone_input = models.UpdateMilestoneInput(
+            name=new_name,
+        )
+        updated_milestone = api_client.update_milestone(milestone.id, milestone_input)
+        assert updated_milestone.name == new_name
+
+
+@pytest.mark.integration
+class TestTasks:
+
+    def test_create_task(self, api_client, task, task_input):
+        assert task is not None
+        assert task.description == task_input.description
+        assert task.complete == False
+
+    def test_update_task(self, api_client, story, task):
+        new_description = fake.text()
+        task_input = models.UpdateTaskInput(
+            description=new_description,
+            complete=True,
+        )
+        updated_task = api_client.update_story_task(story.id, task.id, task_input)
+        assert updated_task.description == new_description
+        assert updated_task.complete == True
+
+
+@pytest.mark.integration
+class TestComments:
+
+    def test_create_comment(self, api_client, comment, comment_input):
+        assert comment is not None
+        assert comment.text == comment_input.text
+
+    def test_update_comment(self, api_client, story, comment):
+        new_text = fake.text()
+        comment_input = models.UpdateCommentInput(
+            text=new_text,
+        )
+        updated_comment = api_client.update_story_comment(story.id, comment.id, comment_input)
+        assert updated_comment.text == new_text
+
+
+@pytest.mark.integration
+class TestGroups:
+
+    def test_list_groups(self, api_client, group):
+        assert group is not None
+        assert hasattr(group, 'id')
+        assert hasattr(group, 'name')
 
 
 if __name__ == "__main__":

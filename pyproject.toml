@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "useshortcut"
-version = "0.0.5"
+version = "0.0.6"
 description = "A REST client for the Shortcut REST API"
 authors = [
     {name = "Ivan Willig", email = "iwillig@gmail.com"},

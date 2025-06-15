@@ -89,6 +89,7 @@ def iteration_name():
     iteration_name = fake.word()
     return iteration_name
 
+
 @pytest.fixture
 def iteration_input(iteration_name):
     iteration_input = models.CreateIterationInput(
@@ -97,6 +98,7 @@ def iteration_input(iteration_name):
         end_date="2020-01-31",
     )
     return iteration_input
+
 
 @pytest.fixture
 def iteration(api_client, iteration_input):
@@ -235,6 +237,7 @@ class TestEpics:
         updated_epic = api_client.update_epic(epic.id, epic_input)
         assert updated_epic.name == new_name
 
+
 @pytest.mark.integration
 class TestIterations:
 
@@ -318,7 +321,9 @@ class TestComments:
         comment_input = models.UpdateCommentInput(
             text=new_text,
         )
-        updated_comment = api_client.update_story_comment(story.id, comment.id, comment_input)
+        updated_comment = api_client.update_story_comment(
+            story.id, comment.id, comment_input
+        )
         assert updated_comment.text == new_text
 
 
@@ -327,8 +332,8 @@ class TestGroups:
 
     def test_list_groups(self, api_client, group):
         assert group is not None
-        assert hasattr(group, 'id')
-        assert hasattr(group, 'name')
+        assert hasattr(group, "id")
+        assert hasattr(group, "name")
 
 
 if __name__ == "__main__":

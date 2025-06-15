@@ -17,6 +17,7 @@ import useshortcut.models as models
 TEST_PREFIX = "TEST_INTEGRATION_"
 TEST_TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+
 @pytest.fixture(scope="session")
 def api_client():
     """Create an API client instance."""
@@ -24,6 +25,7 @@ def api_client():
     if not token:
         pytest.skip("SHORTCUT_API_TOKEN environment variable not set")
     return APIClient(api_token=token)
+
 
 @pytest.fixture(scope="session")
 def default_workflow_state_id(api_client):
@@ -36,12 +38,15 @@ def default_workflow_state_id(api_client):
     workflow = api_client.get_workflow(workflows[0].id)
     return workflow.default_state_id
 
+
 @pytest.mark.integration
 class TestStories:
     """Test story CRUD operations."""
 
     def test_create_story(
-        self, api_client, default_workflow_state_id,
+        self,
+        api_client,
+        default_workflow_state_id,
     ):
         """Test creating a story."""
         story_name = f"{TEST_PREFIX}Story_{TEST_TIMESTAMP}"
@@ -61,12 +66,9 @@ class TestStories:
         assert story.story_type == "feature"
 
         api_client.delete_story(story.id)
-        try:
+
+        with pytest.raises(requests.exceptions.HTTPError):
             api_client.get_story(story.id)
-        except requests.exceptions.HTTPError as e:
-            assert e.response.status_code == 404
-
-
 
 
 if __name__ == "__main__":

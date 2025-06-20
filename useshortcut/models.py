@@ -132,6 +132,7 @@ class Story:
 
     linked_files: Optional[List[Dict[str, Any]]] = field(default_factory=list)
     linked_file_ids: Optional[List[int]] = field(default_factory=list)
+    sub_task_story_ids: Optional[List[int]] = field(default_factory=list)
 
     custom_fields: Optional[List[Dict[str, Any]]] = field(default_factory=list)
     num_tasks_completed: Optional[int] = None
@@ -672,6 +673,7 @@ class Profile:
     display_icon: Optional[Any] = None
     entity_type: str = "profile"
     two_factor_auth_activated: Optional[bool] = None
+    is_agent: Optional[bool] = None
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> "Profile":

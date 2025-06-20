@@ -336,5 +336,35 @@ class TestGroups:
         assert hasattr(group, "name")
 
 
+@pytest.mark.integration
+class TestMembers:
+
+    def test_list_members(self, api_client):
+        """Test listing members and ensure Profile handles is_agent field."""
+        members = api_client.list_members()
+
+        assert isinstance(members, list)
+        assert len(members) > 0
+
+        # Check the first member
+        member = members[0]
+        assert hasattr(member, "id")
+        assert hasattr(member, "profile")
+
+        # Check profile attributes including the new is_agent field
+        if member.profile:
+            profile = member.profile
+            assert hasattr(profile, "id")
+            assert hasattr(profile, "name")
+            assert hasattr(profile, "mention_name")
+            assert hasattr(profile, "is_owner")
+            assert hasattr(profile, "email_address")
+            assert hasattr(profile, "deactivated")
+            assert hasattr(profile, "is_agent")
+
+            # is_agent should be None or a boolean
+            assert profile.is_agent is None or isinstance(profile.is_agent, bool)
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "-m", "integration"])

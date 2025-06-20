@@ -89,6 +89,7 @@ class Story:
     workflow_id: Optional[int] = None
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
+    parent_story_id: Optional[int] = None
     labels: List[Dict[str, Any]] = field(default_factory=list)
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

@@ -34,7 +34,7 @@ jobs:
           python -m pip install pipenv
 
       - name: Cache pipenv virtualenv
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: cache-pipenv
         with:
           path: ~/.local/share/virtualenvs

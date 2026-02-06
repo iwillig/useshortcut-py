@@ -9,7 +9,7 @@ black = "*"
 pytest = "*"
 
 [dev-packages]
-black = "~=25.1.0"
+black = "~=26.1.0"
 pytest = "~=8.4.0"
 pytest-cov = "*"
 invoke = "~=2.2.0"

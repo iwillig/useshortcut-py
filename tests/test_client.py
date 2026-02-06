@@ -1,10 +1,3 @@
-from useshortcut.client import APIClient
-from useshortcut.models import CreateStoryParams, CreateCategoryInput
-import useshortcut.models as models
-import requests
-import os
-
-
 ## Fake test to make pytest runner happy
 def test_answer():
     assert 5 == 5

@@ -1,5 +1,8 @@
-import pytest
 from datetime import datetime
+
+import pytest
+import requests
+
 from useshortcut import models
 from useshortcut.client import APIClient
 
@@ -285,7 +288,7 @@ class TestCustomFields:
             json={"message": "Custom field not found", "error": "NotFound"},
         )
 
-        with pytest.raises(Exception):  # Will be HTTPError
+        with pytest.raises(requests.exceptions.HTTPError):
             api_client.get_custom_field(custom_field_id)
 
     def test_update_custom_field_disabled(

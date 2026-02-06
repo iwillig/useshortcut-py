@@ -1,8 +1,8 @@
-from invoke import task, Context
-import sys
 import os
-import json
+import sys
+
 import requests
+from invoke import Context, task
 
 
 @task
@@ -16,18 +16,23 @@ def test(c: Context, verbose: bool = False):
 
 @task
 def fmt(c: Context, check: bool = False):
-    """Format code with black"""
-    cmd = "pipenv run black ."
+    """Format code with ruff"""
     if check:
-        cmd += " --check"
-    c.run(cmd, pty=True)
+        print("Checking code formatting...")
+        c.run("pipenv run ruff format --check .", pty=True)
+    else:
+        print("Formatting code...")
+        c.run("pipenv run ruff format .", pty=True)
 
 
 @task
-def lint(c: Context):
-    """Run linting checks"""
-    print("Running black check...")
-    c.run("pipenv run black --check .", pty=True)
+def lint(c: Context, fix: bool = False):
+    """Run linting checks with ruff"""
+    cmd = "pipenv run ruff check ."
+    if fix:
+        cmd += " --fix"
+    print(f"Running ruff linter{' with auto-fix' if fix else ''}...")
+    c.run(cmd, pty=True)
 
 
 @task
@@ -81,9 +86,9 @@ def publish(c: Context, test: bool = True):
         c.run("twine upload dist/*", pty=True)
 
 
-@task(pre=[clean, format, test])
+@task(pre=[clean, fmt, lint, test])
 def ci(c: Context):
-    """Run all CI checks (clean, format, test)"""
+    """Run all CI checks (clean, format, lint, test)"""
     print("All CI checks passed!")
 
 

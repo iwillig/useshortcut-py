@@ -19,6 +19,7 @@ build = "*"
 pyyaml = "*"
 requests-mock = "*"
 faker = "*"
+ruff = "*"
 
 [requires]
 python_version = "3"

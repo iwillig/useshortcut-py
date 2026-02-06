@@ -1,5 +1,8 @@
-import pytest
 from datetime import datetime
+
+import pytest
+import requests
+
 from useshortcut import models
 from useshortcut.client import APIClient
 
@@ -302,5 +305,5 @@ class TestMilestones:
             json={"message": "Milestone not found", "error": "NotFound"},
         )
 
-        with pytest.raises(Exception):  # Will be HTTPError
+        with pytest.raises(requests.exceptions.HTTPError):
             api_client.get_milestone(milestone_id)

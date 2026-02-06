@@ -1,5 +1,8 @@
-import pytest
 from datetime import datetime
+
+import pytest
+import requests
+
 from useshortcut import models
 from useshortcut.client import APIClient
 
@@ -285,5 +288,5 @@ class TestStoryTasks:
             json={"message": "Task not found", "error": "NotFound"},
         )
 
-        with pytest.raises(Exception):  # Will be HTTPError
+        with pytest.raises(requests.exceptions.HTTPError):
             api_client.get_story_task(story_id, task_id)

@@ -1,11 +1,14 @@
-from typing import Optional, Dict, Any, List, Union, Iterator
+from collections.abc import Iterator
+from typing import Any, Optional, Union
+
 import requests
+
 import useshortcut.models as models
 
-JSON = Union[Dict[str, Any], List[Dict[str, Any]]]
+JSON = Union[dict[str, Any], list[dict[str, Any]]]
 
 
-def _clean_dict(data: Dict[str, Any]) -> Dict[str, Any]:
+def _clean_dict(data: dict[str, Any]) -> dict[str, Any]:
     """Remove None values from a dictionary."""
     return {k: v for k, v in data.items() if v is not None}
 
@@ -171,7 +174,7 @@ class APIClient:
         return models.Workflow.from_json(data)
 
     # Epic endpoints
-    def list_epics(self) -> List[models.Epic]:
+    def list_epics(self) -> list[models.Epic]:
         """List all epics.
         Returns:
             List of Epic objects
@@ -223,7 +226,7 @@ class APIClient:
         self._make_request("DELETE", f"/epics/{epic_id}")
 
     # Iteration endpoints
-    def list_iterations(self) -> List[models.Iteration]:
+    def list_iterations(self) -> list[models.Iteration]:
         """List all iterations.
         Returns:
             List of Iteration objects
@@ -286,7 +289,7 @@ class APIClient:
 
     def create_story_link(
         self, params: models.StoryLinkInput
-    ) -> List[models.StoryLink]:
+    ) -> list[models.StoryLink]:
         """
         Create a new story link
         Args:
@@ -337,7 +340,7 @@ class APIClient:
         self._make_request("DELETE", f"/story-links/{story_link_id}")
 
     ## Groups
-    def list_groups(self) -> List[models.Group]:
+    def list_groups(self) -> list[models.Group]:
         """
         List all groups.
         Returns:
@@ -425,7 +428,7 @@ class APIClient:
         return models.KeyResult.from_json(data)
 
     ## Labels
-    def list_labels(self) -> List[models.Label]:
+    def list_labels(self) -> list[models.Label]:
         """
         List all labels.
         Returns:
@@ -482,7 +485,7 @@ class APIClient:
         self._make_request("DELETE", f"/labels/{label_id}")
 
     ## Linked Files
-    def list_linked_files(self) -> List[models.LinkedFiles]:
+    def list_linked_files(self) -> list[models.LinkedFiles]:
         """
         List all linked files.
         Returns:
@@ -537,7 +540,7 @@ class APIClient:
         self._make_request("DELETE", f"/linked-files/{linked_file_id}")
 
     ## Files
-    def list_files(self) -> List[models.File]:
+    def list_files(self) -> list[models.File]:
         """
         List all files.
 
@@ -582,7 +585,7 @@ class APIClient:
         self._make_request("DELETE", f"/files/{file_id}")
 
     ## Members
-    def list_members(self) -> List[models.Member]:
+    def list_members(self) -> list[models.Member]:
         """
         List all members.
         Returns:
@@ -604,7 +607,7 @@ class APIClient:
         )
 
     ## Objectives
-    def list_objectives(self) -> List[models.Objective]:
+    def list_objectives(self) -> list[models.Objective]:
         data = self._make_request("GET", "/objectives")
         return [models.Objective.from_json(x) for x in data]
 
@@ -631,7 +634,7 @@ class APIClient:
 
     ## Projects
 
-    def list_projects(self) -> List[models.Project]:
+    def list_projects(self) -> list[models.Project]:
         data = self._make_request("GET", "/projects")
         return [models.Project.from_json(x) for x in data]
 
@@ -659,7 +662,7 @@ class APIClient:
 
     ## Repositories
 
-    def list_repositories(self) -> List[models.Repository]:
+    def list_repositories(self) -> list[models.Repository]:
         data = self._make_request("GET", "/repositories")
         return [models.Repository.from_json(x) for x in data]
 
@@ -675,7 +678,7 @@ class APIClient:
 
     ## Categories
 
-    def list_categories(self) -> List[models.Category]:
+    def list_categories(self) -> list[models.Category]:
         data = self._make_request("GET", "/categories")
         return [models.Category.from_json(x) for x in data]
 
@@ -702,7 +705,7 @@ class APIClient:
 
     ## Custom Fields
 
-    def list_custom_fields(self) -> List[models.CustomField]:
+    def list_custom_fields(self) -> list[models.CustomField]:
         """List all custom fields.
         Returns:
             List of CustomField objects
@@ -751,9 +754,87 @@ class APIClient:
         """
         self._make_request("DELETE", f"/custom-fields/{custom_field_id}")
 
+    ## Documents (Docs)
+
+    def list_docs(self) -> list[models.DocSlim]:
+        """List all documents.
+        Returns:
+            List of DocSlim objects
+        """
+        data = self._make_request("GET", "/documents")
+        return [models.DocSlim.from_json(x) for x in data]
+
+    def get_doc(self, doc_id: str, include_html: bool = False) -> models.Doc:
+        """Get a specific document by ID.
+        Args:
+            doc_id: The UUID of the document
+            include_html: Whether to include HTML content in the response
+        Returns:
+            Doc object
+        """
+        params = {"include_html": "true"} if include_html else None
+        data = self._make_request("GET", f"/documents/{doc_id}", params=params)
+        return models.Doc.from_json(data)
+
+    def create_doc(self, doc: models.CreateDocInput) -> models.Doc:
+        """Create a new document.
+        Args:
+            doc: Document parameters
+        Returns:
+            Created Doc object
+        """
+        data = self._make_request("POST", "/documents", json=_clean_dict(doc.__dict__))
+        return models.Doc.from_json(data)
+
+    def update_doc(self, doc_id: str, doc: models.UpdateDocInput) -> models.Doc:
+        """Update an existing document.
+        Args:
+            doc_id: The UUID of the document to update
+            doc: Updated document parameters
+        Returns:
+            Updated Doc object
+        """
+        data = self._make_request(
+            "PUT", f"/documents/{doc_id}", json=_clean_dict(doc.__dict__)
+        )
+        return models.Doc.from_json(data)
+
+    def delete_doc(self, doc_id: str) -> None:
+        """Delete a document.
+        Args:
+            doc_id: The UUID of the document to delete
+        """
+        self._make_request("DELETE", f"/documents/{doc_id}")
+
+    def list_document_epics(self, doc_id: str) -> list[models.Epic]:
+        """List all epics associated with a document.
+        Args:
+            doc_id: The UUID of the document
+        Returns:
+            List of Epic objects
+        """
+        data = self._make_request("GET", f"/documents/{doc_id}/epics")
+        return [models.Epic.from_json(x) for x in data]
+
+    def link_document_to_epic(self, doc_id: str, epic_id: int) -> None:
+        """Link a document to an epic.
+        Args:
+            doc_id: The UUID of the document
+            epic_id: The ID of the epic to link to
+        """
+        self._make_request("PUT", f"/documents/{doc_id}/epics/{epic_id}")
+
+    def unlink_document_from_epic(self, doc_id: str, epic_id: int) -> None:
+        """Unlink a document from an epic.
+        Args:
+            doc_id: The UUID of the document
+            epic_id: The ID of the epic to unlink from
+        """
+        self._make_request("DELETE", f"/documents/{doc_id}/epics/{epic_id}")
+
     ## Story Comments
 
-    def list_story_comments(self, story_id: int) -> List[models.StoryComment]:
+    def list_story_comments(self, story_id: int) -> list[models.StoryComment]:
         """List all comments for a story.
         Args:
             story_id: The ID of the story
@@ -819,7 +900,7 @@ class APIClient:
 
     ## Epic Comments
 
-    def list_epic_comments(self, epic_id: int) -> List[models.ThreadedComment]:
+    def list_epic_comments(self, epic_id: int) -> list[models.ThreadedComment]:
         """List all comments for an epic.
         Args:
             epic_id: The ID of the epic
@@ -885,7 +966,7 @@ class APIClient:
 
     ## Story Tasks
 
-    def list_story_tasks(self, story_id: int) -> List[models.Task]:
+    def list_story_tasks(self, story_id: int) -> list[models.Task]:
         """List all tasks for a story.
         Args:
             story_id: The ID of the story
@@ -949,7 +1030,7 @@ class APIClient:
 
     ## Milestones
 
-    def list_milestones(self) -> List[models.Milestone]:
+    def list_milestones(self) -> list[models.Milestone]:
         """List all milestones.
         Returns:
             List of Milestone objects
@@ -1015,7 +1096,7 @@ class APIClient:
         """
         self._make_request("DELETE", f"/milestones/{milestone_id}")
 
-    def list_milestone_epics(self, milestone_id: int) -> List[models.Epic]:
+    def list_milestone_epics(self, milestone_id: int) -> list[models.Epic]:
         """List all epics associated with a milestone.
         Args:
             milestone_id: The ID of the milestone
@@ -1025,7 +1106,7 @@ class APIClient:
         data = self._make_request("GET", f"/milestones/{milestone_id}/epics")
         return [models.Epic.from_json(x) for x in data]
 
-    def list_category_milestones(self, category_id: int) -> List[models.Milestone]:
+    def list_category_milestones(self, category_id: int) -> list[models.Milestone]:
         """List all milestones in a category.
         Args:
             category_id: The ID of the category

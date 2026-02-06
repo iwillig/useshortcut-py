@@ -35,10 +35,14 @@ jobs:
         run: |
           pipenv install --dev --python 3.11
       
+      - name: Run linting
+        run: |
+          pipenv run ruff check .
+
       - name: Check code formatting
         run: |
-          pipenv run black --check .
-      
+          pipenv run ruff format --check .
+
       - name: Run tests with coverage
         run: |
           pipenv run pytest --cov=useshortcut --cov-report=term --cov-report=xml

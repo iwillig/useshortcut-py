@@ -1,7 +1,5 @@
 """Pytest configuration and fixtures for tests."""
 
-import pytest
-
 
 def pytest_configure(config):
     """Configure pytest with custom markers."""

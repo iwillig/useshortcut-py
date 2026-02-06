@@ -32,7 +32,7 @@ keywords = ["shortcut", "api", "client", "rest", "project-management", "clubhous
 
 [project.optional-dependencies]
 dev = [
-    "black>=24.0.0",
+    "ruff>=0.8.0",
     "pytest>=8.0.0",
     "pytest-cov>=4.0.0",
     "twine>=4.0.0",
@@ -50,9 +50,38 @@ where = ["."]
 include = ["useshortcut*"]
 exclude = ["tests*"]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ['py39']
+target-version = "py39"
+
+[tool.ruff.lint]
+# Enable all recommended rules (E, F, I for isort, W for pycodestyle warnings)
+select = [
+    "E",   # pycodestyle errors
+    "F",   # Pyflakes
+    "I",   # isort (import sorting)
+    "W",   # pycodestyle warnings
+    "UP",  # pyupgrade (Python upgrade checks)
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings
+quote-style = "double"
+# Like Black, indent with spaces
+indent-style = "space"
+# Like Black, respect magic trailing commas
+skip-magic-trailing-comma = false
+# Like Black, automatically detect line ending
+line-ending = "auto"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -52,7 +52,12 @@ jobs:
 
       - name: Run linting
         run: |
-          pipenv run black --check .
+          pipenv run ruff check .
+        if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
+
+      - name: Check code formatting
+        run: |
+          pipenv run ruff format --check .
         if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
 
   build:

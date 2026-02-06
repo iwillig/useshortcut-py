@@ -1,6 +1,6 @@
-from typing import Optional, List, Dict, Any, TypeVar, Generic
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any, Generic, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -18,31 +18,31 @@ class CreateStoryParams:
     story_type: Optional[str] = "feature"
     project_id: Optional[int] = None
     epic_id: Optional[int] = None
-    label_ids: Optional[List[int]] = None
+    label_ids: Optional[list[int]] = None
     archived: Optional[bool] = None
-    story_links: Optional[List[Dict[str, Any]]] = None
-    labels: Optional[List[Dict[str, Any]]] = None
-    custom_fields: Optional[List[Dict[str, Any]]] = None
+    story_links: Optional[list[dict[str, Any]]] = None
+    labels: Optional[list[dict[str, Any]]] = None
+    custom_fields: Optional[list[dict[str, Any]]] = None
     move_to: Optional[str] = None
-    file_ids: Optional[List[int]] = None
+    file_ids: Optional[list[int]] = None
     source_task_id: Optional[int] = None
     completed_at_override: Optional[datetime] = None
-    comments: Optional[List[Dict[str, Any]]] = None
+    comments: Optional[list[dict[str, Any]]] = None
     story_template_id: Optional[str] = None
-    external_links: Optional[List[str]] = None
-    sub_tasks: Optional[List[Dict[str, Any]]] = None
+    external_links: Optional[list[str]] = None
+    sub_tasks: Optional[list[dict[str, Any]]] = None
     requested_by_id: Optional[str] = None
     iteration_id: Optional[int] = None
-    tasks: Optional[List[Dict[str, Any]]] = None
+    tasks: Optional[list[dict[str, Any]]] = None
     started_at_override: Optional[datetime] = None
     group_id: Optional[str] = None
     updated_at: Optional[datetime] = None
-    follower_ids: Optional[List[str]] = None
-    owner_ids: Optional[List[str]] = None
+    follower_ids: Optional[list[str]] = None
+    owner_ids: Optional[list[str]] = None
     external_id: Optional[str] = None
     parent_story_id: Optional[int] = None
     estimate: Optional[int] = None
-    linked_file_ids: Optional[List[int]] = None
+    linked_file_ids: Optional[list[int]] = None
     deadline: Optional[datetime] = None
     created_at: Optional[datetime] = None
 
@@ -55,9 +55,9 @@ class UpdateStoryInput:
     story_type: Optional[str] = None
     project_id: Optional[int] = None
     epic_id: Optional[int] = None
-    label_ids: Optional[List[int]] = None
-    owner_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
+    label_ids: Optional[list[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
     archived: Optional[bool] = None
     deadline: Optional[datetime] = None
     estimate: Optional[int] = None
@@ -90,7 +90,7 @@ class Story:
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
     parent_story_id: Optional[int] = None
-    labels: List[Dict[str, Any]] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     app_url: Optional[str] = None
@@ -109,36 +109,36 @@ class Story:
 
     blocked: Optional[bool] = None
 
-    pull_requests: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    story_links: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    comments: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    branches: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    tasks: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    commits: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    files: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    external_links: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    pull_requests: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    story_links: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    comments: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    branches: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    tasks: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    commits: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    files: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    external_links: Optional[list[dict[str, Any]]] = field(default_factory=list)
 
-    group_mention_ids: Optional[List[int]] = field(default_factory=list)
-    comment_ids: Optional[List[int]] = field(default_factory=list)
-    follower_ids: Optional[List[int]] = field(default_factory=list)
-    owner_ids: Optional[List[int]] = field(default_factory=list)
+    group_mention_ids: Optional[list[int]] = field(default_factory=list)
+    comment_ids: Optional[list[int]] = field(default_factory=list)
+    follower_ids: Optional[list[int]] = field(default_factory=list)
+    owner_ids: Optional[list[int]] = field(default_factory=list)
 
-    previous_iteration_ids: Optional[List[int]] = field(default_factory=list)
+    previous_iteration_ids: Optional[list[int]] = field(default_factory=list)
 
-    mention_ids: Optional[List[int]] = field(default_factory=list)
-    member_mention_ids: Optional[List[int]] = field(default_factory=list)
-    label_ids: Optional[List[int]] = field(default_factory=list)
-    task_ids: Optional[List[int]] = field(default_factory=list)
-    file_ids: Optional[List[int]] = field(default_factory=list)
+    mention_ids: Optional[list[int]] = field(default_factory=list)
+    member_mention_ids: Optional[list[int]] = field(default_factory=list)
+    label_ids: Optional[list[int]] = field(default_factory=list)
+    task_ids: Optional[list[int]] = field(default_factory=list)
+    file_ids: Optional[list[int]] = field(default_factory=list)
 
-    linked_files: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    linked_file_ids: Optional[List[int]] = field(default_factory=list)
-    sub_task_story_ids: Optional[List[int]] = field(default_factory=list)
+    linked_files: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    linked_file_ids: Optional[list[int]] = field(default_factory=list)
+    sub_task_story_ids: Optional[list[int]] = field(default_factory=list)
 
-    custom_fields: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    custom_fields: Optional[list[dict[str, Any]]] = field(default_factory=list)
     num_tasks_completed: Optional[int] = None
 
-    stats: Optional[Dict[str, Any]] = None
+    stats: Optional[dict[str, Any]] = None
     lead_time: Optional[int] = None
     cycle_time: Optional[int] = None
     formatted_vcs_branch_name: Optional[str] = None
@@ -146,7 +146,7 @@ class Story:
     entity_type: str = "story"
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Story":
+    def from_json(cls, data: dict[str, Any]) -> "Story":
         # Convert datetime strings
         date_fields = [
             "created_at",
@@ -158,9 +158,11 @@ class Story:
             "started_at",
             "started_at_override",
         ]
-        for field in date_fields:
-            if field in data and isinstance(data[field], str):
-                data[field] = datetime.fromisoformat(data[field].replace("Z", "+00:00"))
+        for date_field in date_fields:
+            if date_field in data and isinstance(data[date_field], str):
+                data[date_field] = datetime.fromisoformat(
+                    data[date_field].replace("Z", "+00:00")
+                )
         return cls(**data)
 
 
@@ -181,13 +183,13 @@ class Task:
     external_id: Optional[str] = None
     global_id: Optional[str] = None
 
-    owner_ids: List[str] = field(default_factory=list)
-    mention_ids: List[str] = field(default_factory=list)  # Deprecated
-    member_mention_ids: List[str] = field(default_factory=list)
-    group_mention_ids: List[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    mention_ids: list[str] = field(default_factory=list)  # Deprecated
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Task":
+    def from_json(cls, data: dict[str, Any]) -> "Task":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -211,7 +213,7 @@ class CreateTaskInput:
 
     description: str
     complete: bool = False
-    owner_ids: List[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
     external_id: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -222,7 +224,7 @@ class UpdateTaskInput:
     """Request parameters for updating a Task."""
 
     description: Optional[str] = None
-    owner_ids: Optional[List[str]] = None
+    owner_ids: Optional[list[str]] = None
     complete: Optional[bool] = None
     before_id: Optional[int] = None
     after_id: Optional[int] = None
@@ -236,9 +238,9 @@ class CreateEpicInput:
     milestone_id: Optional[int] = None
     requested_by_id: Optional[str] = None
     group_id: Optional[str] = None
-    owner_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
     planned_start_date: Optional[datetime] = None
     deadline: Optional[datetime] = None
 
@@ -251,9 +253,9 @@ class UpdateEpicInput:
     milestone_id: Optional[int] = None
     requested_by_id: Optional[str] = None
     group_id: Optional[str] = None
-    owner_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
     planned_start_date: Optional[datetime] = None
     deadline: Optional[datetime] = None
     archived: Optional[bool] = None
@@ -288,33 +290,33 @@ class Epic:
     completed: Optional[bool] = None
     completed_at: Optional[datetime] = None
     completed_at_override: Optional[datetime] = None
-    objective_ids: Optional[List[str]] = field(default_factory=list)
+    objective_ids: Optional[list[str]] = field(default_factory=list)
     planned_start_date: Optional[datetime] = None
     started_at_override: Optional[datetime] = None
     milestone_id: Optional[int] = None
     epic_state_id: Optional[int] = None
     app_url: Optional[str] = None
     entity_type: str = "epic"
-    group_mention_ids: Optional[List[str]] = field(default_factory=list)
-    follower_ids: Optional[List[str]] = field(default_factory=list)
-    labels: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    label_ids: Optional[List[int]] = field(default_factory=list)
-    group_ids: Optional[List[str]] = field(default_factory=list)
-    owner_ids: Optional[List[str]] = field(default_factory=list)
+    group_mention_ids: Optional[list[str]] = field(default_factory=list)
+    follower_ids: Optional[list[str]] = field(default_factory=list)
+    labels: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    label_ids: Optional[list[int]] = field(default_factory=list)
+    group_ids: Optional[list[str]] = field(default_factory=list)
+    owner_ids: Optional[list[str]] = field(default_factory=list)
     external_id: Optional[str] = None
     position: Optional[int] = None
 
     stories_without_projects: Optional[Any] = None
 
-    project_ids: Optional[List[int]] = field(default_factory=list)
-    mention_ids: Optional[List[str]] = field(default_factory=list)
-    member_mention_ids: Optional[List[str]] = field(default_factory=list)
-    associated_groups: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    comments: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    project_ids: Optional[list[int]] = field(default_factory=list)
+    mention_ids: Optional[list[str]] = field(default_factory=list)
+    member_mention_ids: Optional[list[str]] = field(default_factory=list)
+    associated_groups: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    comments: Optional[list[dict[str, Any]]] = field(default_factory=list)
     stats: Optional[Any] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Epic":
+    def from_json(cls, data: dict[str, Any]) -> "Epic":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -359,13 +361,13 @@ class Epic:
 class EpicWorkflow:
     id: int
     default_epic_state_id: int
-    epic_states: List[Dict[str, Any]]
+    epic_states: list[dict[str, Any]]
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     entity_type: str = "epic-workflow"
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "EpicWorkflow":
+    def from_json(cls, data: dict[str, Any]) -> "EpicWorkflow":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -384,9 +386,9 @@ class CreateIterationInput:
     start_date: str
     end_date: str
     description: Optional[str] = None
-    follower_ids: Optional[List[str]] = None
-    group_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    follower_ids: Optional[list[str]] = None
+    group_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
 
 
 @dataclass
@@ -395,9 +397,9 @@ class UpdateIterationInput:
     description: Optional[str] = None
     start_date: Optional[str] = None
     end_date: Optional[str] = None
-    follower_ids: Optional[List[str]] = None
-    group_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    follower_ids: Optional[list[str]] = None
+    group_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
 
 
 @dataclass
@@ -414,21 +416,21 @@ class Iteration:
     updated_at: Optional[datetime] = None
 
     app_url: Optional[str] = None
-    labels: Optional[List[Dict[str, Any]]] = field(default_factory=list)
-    follower_ids: Optional[List[str]] = field(default_factory=list)
-    group_ids: Optional[List[str]] = field(default_factory=list)
-    mention_ids: Optional[List[str]] = field(default_factory=list)
-    member_mention_ids: Optional[List[str]] = field(default_factory=list)
-    group_mention_ids: Optional[List[str]] = field(default_factory=list)
-    label_ids: Optional[List[int]] = field(default_factory=list)
+    labels: Optional[list[dict[str, Any]]] = field(default_factory=list)
+    follower_ids: Optional[list[str]] = field(default_factory=list)
+    group_ids: Optional[list[str]] = field(default_factory=list)
+    mention_ids: Optional[list[str]] = field(default_factory=list)
+    member_mention_ids: Optional[list[str]] = field(default_factory=list)
+    group_mention_ids: Optional[list[str]] = field(default_factory=list)
+    label_ids: Optional[list[int]] = field(default_factory=list)
 
-    associated_groups: Optional[List[Dict[str, Any]]] = field(default_factory=list)
+    associated_groups: Optional[list[dict[str, Any]]] = field(default_factory=list)
 
     entity_type: str = "iteration"
     stats: Optional[Any] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Iteration":
+    def from_json(cls, data: dict[str, Any]) -> "Iteration":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -467,7 +469,7 @@ class StoryLink:
     updated_at: Optional[datetime] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StoryLink":
+    def from_json(cls, data: dict[str, Any]) -> "StoryLink":
         return cls(**data)
 
 
@@ -498,19 +500,19 @@ class Group:
     color_key: Optional[str] = None
     display_icon: Optional[Any] = None
 
-    member_ids: Optional[List[str]] = field(default_factory=list)
+    member_ids: Optional[list[str]] = field(default_factory=list)
     num_stories_started: Optional[int] = None
     num_stories: Optional[int] = None
     num_epics_started: Optional[int] = None
     num_stories_backlog: Optional[int] = None
-    workflow_ids: Optional[List[int]] = field(default_factory=list)
+    workflow_ids: Optional[list[int]] = field(default_factory=list)
     default_workflow_id: Optional[int] = None
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Group":
+    def from_json(cls, data: dict[str, Any]) -> "Group":
         return cls(**data)
 
 
@@ -520,7 +522,7 @@ class KeyResultValue:
     numeric_value: str
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "KeyResultValue":
+    def from_json(cls, data: dict[str, Any]) -> "KeyResultValue":
         return cls(**data)
 
 
@@ -545,7 +547,7 @@ class KeyResult:
     initial_observed_value: Optional[int] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "KeyResult":
+    def from_json(cls, data: dict[str, Any]) -> "KeyResult":
         return cls(**data)
 
 
@@ -581,7 +583,7 @@ class Label:
     stats: Optional[Any] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Label":
+    def from_json(cls, data: dict[str, Any]) -> "Label":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -621,12 +623,12 @@ class LinkedFiles:
     description: Optional[str] = None
     entity_type: str = "linked-file"
 
-    group_mention_ids: Optional[List[str]] = field(default_factory=list)
-    member_mention_ids: Optional[List[str]] = field(default_factory=list)
-    mention_ids: Optional[List[str]] = field(default_factory=list)
+    group_mention_ids: Optional[list[str]] = field(default_factory=list)
+    member_mention_ids: Optional[list[str]] = field(default_factory=list)
+    mention_ids: Optional[list[str]] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "LinkedFiles":
+    def from_json(cls, data: dict[str, Any]) -> "LinkedFiles":
         return cls(**data)
 
 
@@ -649,15 +651,15 @@ class File:
     filename: str
     entity_type: str = "file"
     external_id: Optional[str] = None
-    group_mention_ids: Optional[List[str]] = field(default_factory=list)
-    member_mention_ids: Optional[List[str]] = field(default_factory=list)
-    mention_ids: Optional[List[str]] = field(default_factory=list)
+    group_mention_ids: Optional[list[str]] = field(default_factory=list)
+    member_mention_ids: Optional[list[str]] = field(default_factory=list)
+    mention_ids: Optional[list[str]] = field(default_factory=list)
     story_link_id: Optional[int] = None
-    story_ids: Optional[List[int]] = field(default_factory=list)
+    story_ids: Optional[list[int]] = field(default_factory=list)
     thumbnail_url: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "File":
+    def from_json(cls, data: dict[str, Any]) -> "File":
         return cls(**data)
 
 
@@ -677,7 +679,7 @@ class Profile:
     is_agent: Optional[bool] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Profile":
+    def from_json(cls, data: dict[str, Any]) -> "Profile":
         return cls(**data)
 
 
@@ -697,7 +699,7 @@ class Member:
     updated_at: Optional[datetime] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Member":
+    def from_json(cls, data: dict[str, Any]) -> "Member":
 
         if "profile" in data:
             data["profile"] = Profile.from_json(data["profile"])
@@ -736,7 +738,7 @@ class Objective:
     stats: Optional[Any] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Objective":
+    def from_json(cls, data: dict[str, Any]) -> "Objective":
         return cls(**data)
 
 
@@ -753,7 +755,7 @@ class Repository:
     updated_at: Optional[datetime] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Repository":
+    def from_json(cls, data: dict[str, Any]) -> "Repository":
         return cls(**data)
 
 
@@ -774,7 +776,7 @@ class WorkflowState:
     color: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "WorkflowState":
+    def from_json(cls, data: dict[str, Any]) -> "WorkflowState":
         return cls(**data)
 
 
@@ -786,19 +788,19 @@ class Workflow:
     entity_type: str = "workflow"
 
     auto_assign_owner: Optional[bool] = None
-    project_ids: Optional[List[int]] = field(default_factory=list)
+    project_ids: Optional[list[int]] = field(default_factory=list)
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
     default_state_id: Optional[int] = None
 
-    states: List[WorkflowState] = field(default_factory=list)
+    states: list[WorkflowState] = field(default_factory=list)
 
     team_id: Optional[int] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Workflow":
+    def from_json(cls, data: dict[str, Any]) -> "Workflow":
         if "states" in data:
             data["states"] = [WorkflowState.from_json(x) for x in data["states"]]
         return cls(**data)
@@ -832,7 +834,7 @@ class Category:
     entity_type: str = "category"
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Category":
+    def from_json(cls, data: dict[str, Any]) -> "Category":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -852,7 +854,7 @@ class CreateProjectInput:
     color: Optional[str] = None
     description: Optional[str] = None
     external_id: Optional[str] = None
-    follower_ids: Optional[List[str]] = None
+    follower_ids: Optional[list[str]] = None
     team_id: Optional[int] = None
 
 
@@ -874,15 +876,15 @@ class Project:
     description: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    follower_ids: List[str] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
     external_id: Optional[str] = None
     team_id: Optional[int] = None
     iteration_length: Optional[int] = None
     start_time: Optional[datetime] = None
-    stats: Optional[Dict[str, Any]] = None
+    stats: Optional[dict[str, Any]] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Project":
+    def from_json(cls, data: dict[str, Any]) -> "Project":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -908,12 +910,12 @@ class SearchInputs:
 
 @dataclass
 class SearchStoryResult:
-    data: List[Story]
+    data: list[Story]
     total: int
     next: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "SearchStoryResult":
+    def from_json(cls, data: dict[str, Any]) -> "SearchStoryResult":
         if "data" in data:
             data["data"] = [Story.from_json(x) for x in data["data"]]
         return cls(**data)
@@ -923,13 +925,13 @@ class SearchStoryResult:
 class PaginatedResponse(Generic[T]):
     """Generic paginated response wrapper for list endpoints."""
 
-    data: List[T]
+    data: list[T]
     next: Optional[str] = None
     total: Optional[int] = None
 
     @classmethod
     def from_json(
-        cls, data: Dict[str, Any], item_class: type[T]
+        cls, data: dict[str, Any], item_class: type[T]
     ) -> "PaginatedResponse[T]":
         """Create a PaginatedResponse from JSON data.
 
@@ -955,10 +957,10 @@ class StoryReaction:
     """Emoji reaction on a comment."""
 
     emoji: str
-    permission_ids: List[str]
+    permission_ids: list[str]
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StoryReaction":
+    def from_json(cls, data: dict[str, Any]) -> "StoryReaction":
         return cls(**data)
 
 
@@ -983,13 +985,13 @@ class StoryComment:
     unblocks_parent: bool = False
     linked_to_slack: bool = False
 
-    mention_ids: List[str] = field(default_factory=list)  # Deprecated
-    member_mention_ids: List[str] = field(default_factory=list)
-    group_mention_ids: List[str] = field(default_factory=list)
-    reactions: List[StoryReaction] = field(default_factory=list)
+    mention_ids: list[str] = field(default_factory=list)  # Deprecated
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
+    reactions: list[StoryReaction] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StoryComment":
+    def from_json(cls, data: dict[str, Any]) -> "StoryComment":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -1046,13 +1048,13 @@ class ThreadedComment:
     updated_at: Optional[datetime] = None
     external_id: Optional[str] = None
 
-    mention_ids: List[str] = field(default_factory=list)  # Deprecated
-    member_mention_ids: List[str] = field(default_factory=list)
-    group_mention_ids: List[str] = field(default_factory=list)
-    comments: List["ThreadedComment"] = field(default_factory=list)
+    mention_ids: list[str] = field(default_factory=list)  # Deprecated
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
+    comments: list["ThreadedComment"] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "ThreadedComment":
+    def from_json(cls, data: dict[str, Any]) -> "ThreadedComment":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -1079,7 +1081,7 @@ class MilestoneStats:
     average_lead_time: Optional[int] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "MilestoneStats":
+    def from_json(cls, data: dict[str, Any]) -> "MilestoneStats":
         return cls(**data)
 
 
@@ -1107,11 +1109,11 @@ class Milestone:
     started_at_override: Optional[datetime] = None
     completed_at_override: Optional[datetime] = None
 
-    categories: List["Category"] = field(default_factory=list)
-    key_result_ids: List[str] = field(default_factory=list)
+    categories: list["Category"] = field(default_factory=list)
+    key_result_ids: list[str] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Milestone":
+    def from_json(cls, data: dict[str, Any]) -> "Milestone":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -1172,7 +1174,7 @@ class CreateMilestoneInput:
     state: Optional[str] = "to do"  # Enum: "in progress", "to do", "done"
     started_at_override: Optional[datetime] = None
     completed_at_override: Optional[datetime] = None
-    categories: List[CreateCategoryParams] = field(default_factory=list)
+    categories: list[CreateCategoryParams] = field(default_factory=list)
 
 
 @dataclass
@@ -1185,7 +1187,7 @@ class UpdateMilestoneInput:
     archived: Optional[bool] = None
     started_at_override: Optional[datetime] = None
     completed_at_override: Optional[datetime] = None
-    categories: Optional[List[CreateCategoryParams]] = None
+    categories: Optional[list[CreateCategoryParams]] = None
     before_id: Optional[int] = None
     after_id: Optional[int] = None
 
@@ -1202,7 +1204,7 @@ class CustomFieldEnumValue:
     enabled: bool = True
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "CustomFieldEnumValue":
+    def from_json(cls, data: dict[str, Any]) -> "CustomFieldEnumValue":
         return cls(**data)
 
 
@@ -1224,11 +1226,11 @@ class CustomField:
     canonical_name: Optional[str] = None
     fixed_position: bool = False
 
-    story_types: List[str] = field(default_factory=list)
-    values: List[CustomFieldEnumValue] = field(default_factory=list)
+    story_types: list[str] = field(default_factory=list)
+    values: list[CustomFieldEnumValue] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "CustomField":
+    def from_json(cls, data: dict[str, Any]) -> "CustomField":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -1264,6 +1266,64 @@ class UpdateCustomFieldInput:
     description: Optional[str] = None
     enabled: Optional[bool] = None
     icon_set_identifier: Optional[str] = None
-    values: Optional[List[UpdateCustomFieldEnumValue]] = None
+    values: Optional[list[UpdateCustomFieldEnumValue]] = None
     before_id: Optional[str] = None
     after_id: Optional[str] = None
+
+
+@dataclass
+class Doc:
+    """A document in Shortcut."""
+
+    id: str
+    title: Optional[str]
+    content_markdown: Optional[str]
+    app_url: str
+    created_at: datetime
+    updated_at: datetime
+    archived: bool
+    content_html: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "Doc":
+        # Convert datetime strings
+        if "created_at" in data and isinstance(data["created_at"], str):
+            data["created_at"] = datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            )
+        if "updated_at" in data and isinstance(data["updated_at"], str):
+            data["updated_at"] = datetime.fromisoformat(
+                data["updated_at"].replace("Z", "+00:00")
+            )
+        return cls(**data)
+
+
+@dataclass
+class DocSlim:
+    """A slimmed-down version of a Doc for list views."""
+
+    id: str
+    title: Optional[str]
+    app_url: str
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "DocSlim":
+        return cls(**data)
+
+
+@dataclass
+class CreateDocInput:
+    """Request parameters for creating a Doc."""
+
+    title: str
+    content: str
+    content_format: Optional[str] = None  # "markdown" or "html"
+
+
+@dataclass
+class UpdateDocInput:
+    """Request parameters for updating a Doc."""
+
+    title: Optional[str] = None
+    content: Optional[str] = None
+    content_format: Optional[str] = None  # "markdown" or "html"

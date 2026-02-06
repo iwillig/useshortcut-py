@@ -1,8 +1,8 @@
 import pytest
 import requests
-from datetime import datetime
-from useshortcut.client import APIClient
+
 from useshortcut import models
+from useshortcut.client import APIClient
 
 
 @pytest.fixture

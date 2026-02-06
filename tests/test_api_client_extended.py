@@ -1,6 +1,7 @@
 import pytest
-from useshortcut.client import APIClient
+
 from useshortcut import models
+from useshortcut.client import APIClient
 
 
 @pytest.fixture

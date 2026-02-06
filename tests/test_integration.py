@@ -4,12 +4,13 @@ These tests require a valid SHORTCUT_TOKEN environment variable.
 """
 
 import os
-import pytest
 from datetime import datetime
 
-from useshortcut.client import APIClient
-import useshortcut.models as models
+import pytest
 from faker import Faker
+
+import useshortcut.models as models
+from useshortcut.client import APIClient
 
 # Test data prefix to identify test-created resources
 TEST_PREFIX = "TEST_INTEGRATION_"
@@ -201,7 +202,6 @@ def comment(api_client, story, comment_input):
 
 @pytest.mark.integration
 class TestStories:
-
     def test_create_story(
         self, api_client, default_workflow_state_id, story, test_story_name
     ):
@@ -223,7 +223,6 @@ class TestStories:
 
 @pytest.mark.integration
 class TestEpics:
-
     def test_create_epic(self, api_client, epic_input):
         epic = api_client.create_epic(epic_input)
         assert epic is not None
@@ -240,7 +239,6 @@ class TestEpics:
 
 @pytest.mark.integration
 class TestIterations:
-
     def test_create_iteration(self, api_client, iteration, iteration_input):
         assert iteration is not None
         assert iteration.name == iteration_input.name
@@ -256,7 +254,6 @@ class TestIterations:
 
 @pytest.mark.integration
 class TestLabels:
-
     def test_create_label(self, api_client, label, label_input):
         assert label is not None
         assert label.name == label_input.name
@@ -275,7 +272,6 @@ class TestLabels:
 
 @pytest.mark.integration
 class TestMilestones:
-
     def test_create_milestone(self, api_client, milestone, milestone_input):
         assert milestone is not None
         assert milestone.name == milestone_input.name
@@ -292,11 +288,10 @@ class TestMilestones:
 
 @pytest.mark.integration
 class TestTasks:
-
     def test_create_task(self, api_client, task, task_input):
         assert task is not None
         assert task.description == task_input.description
-        assert task.complete == False
+        assert not task.complete
 
     def test_update_task(self, api_client, story, task):
         new_description = fake.text()
@@ -306,12 +301,11 @@ class TestTasks:
         )
         updated_task = api_client.update_story_task(story.id, task.id, task_input)
         assert updated_task.description == new_description
-        assert updated_task.complete == True
+        assert updated_task.complete
 
 
 @pytest.mark.integration
 class TestComments:
-
     def test_create_comment(self, api_client, comment, comment_input):
         assert comment is not None
         assert comment.text == comment_input.text
@@ -329,7 +323,6 @@ class TestComments:
 
 @pytest.mark.integration
 class TestGroups:
-
     def test_list_groups(self, api_client, group):
         assert group is not None
         assert hasattr(group, "id")
@@ -338,7 +331,6 @@ class TestGroups:
 
 @pytest.mark.integration
 class TestMembers:
-
     def test_list_members(self, api_client):
         """Test listing members and ensure Profile handles is_agent field."""
         members = api_client.list_members()

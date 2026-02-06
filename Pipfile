@@ -10,7 +10,7 @@ pytest = "*"
 
 [dev-packages]
 black = "~=25.1.0"
-pytest = "~=8.4.0"
+pytest = ">=8.4,<9.1"
 pytest-cov = "*"
 invoke = "~=2.2.0"
 twine = "*"

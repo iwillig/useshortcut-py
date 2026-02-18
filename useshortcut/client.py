@@ -754,86 +754,6 @@ class APIClient:
         """
         self._make_request("DELETE", f"/custom-fields/{custom_field_id}")
 
-    ## Documents (Docs)
-
-    def list_docs(self) -> list[models.DocSlim]:
-        """List all documents.
-        Returns:
-            List of DocSlim objects
-        """
-        data = self._make_request("GET", "/documents")
-        return [models.DocSlim.from_json(x) for x in data]
-
-    def get_doc(self, doc_id: str, include_html: bool = False) -> models.Doc:
-        """Get a specific document by ID.
-        Args:
-            doc_id: The UUID of the document
-            include_html: Whether to include HTML content in the response
-        Returns:
-            Doc object
-        """
-        params = {"include_html": "true"} if include_html else None
-        data = self._make_request("GET", f"/documents/{doc_id}", params=params)
-        return models.Doc.from_json(data)
-
-    def create_doc(self, doc: models.CreateDocInput) -> models.Doc:
-        """Create a new document.
-        Args:
-            doc: Document parameters
-        Returns:
-            Created Doc object
-        """
-        data = self._make_request("POST", "/documents", json=_clean_dict(doc.__dict__))
-        return models.Doc.from_json(data)
-
-    def update_doc(self, doc_id: str, doc: models.UpdateDocInput) -> models.Doc:
-        """Update an existing document.
-        Args:
-            doc_id: The UUID of the document to update
-            doc: Updated document parameters
-        Returns:
-            Updated Doc object
-        """
-        data = self._make_request(
-            "PUT", f"/documents/{doc_id}", json=_clean_dict(doc.__dict__)
-        )
-        return models.Doc.from_json(data)
-
-    def delete_doc(self, doc_id: str) -> None:
-        """Delete a document.
-        Args:
-            doc_id: The UUID of the document to delete
-        """
-        self._make_request("DELETE", f"/documents/{doc_id}")
-
-    def list_document_epics(self, doc_id: str) -> list[models.Epic]:
-        """List all epics associated with a document.
-        Args:
-            doc_id: The UUID of the document
-        Returns:
-            List of Epic objects
-        """
-        data = self._make_request("GET", f"/documents/{doc_id}/epics")
-        return [models.Epic.from_json(x) for x in data]
-
-    def link_document_to_epic(self, doc_id: str, epic_id: int) -> None:
-        """Link a document to an epic.
-        Args:
-            doc_id: The UUID of the document
-            epic_id: The ID of the epic to link to
-        """
-        self._make_request("PUT", f"/documents/{doc_id}/epics/{epic_id}")
-
-    def unlink_document_from_epic(self, doc_id: str, epic_id: int) -> None:
-        """Unlink a document from an epic.
-        Args:
-            doc_id: The UUID of the document
-            epic_id: The ID of the epic to unlink from
-        """
-        self._make_request("DELETE", f"/documents/{doc_id}/epics/{epic_id}")
-
-    ## Story Comments
-
     def list_story_comments(self, story_id: int) -> list[models.StoryComment]:
         """List all comments for a story.
         Args:
@@ -1115,3 +1035,696 @@ class APIClient:
         """
         data = self._make_request("GET", f"/categories/{category_id}/milestones")
         return [models.Milestone.from_json(x) for x in data]
+
+    def list_category_objectives(self, category_id: int) -> list[models.Objective]:
+        """List all objectives in a category.
+        Args:
+            category_id: The ID of the category
+        Returns:
+            List of Objective objects
+        """
+        data = self._make_request("GET", f"/categories/{category_id}/objectives")
+        return [models.Objective.from_json(x) for x in data]
+
+    ## Documents (Docs)
+
+    def list_docs(self) -> list[models.DocSlim]:
+        """List all docs.
+        Returns:
+            List of DocSlim objects
+        """
+        data = self._make_request("GET", "/documents")
+        return [models.DocSlim.from_json(x) for x in data]
+
+    def get_doc(
+        self,
+        doc_id: str,
+        content_format: Optional[str] = None,
+        include_html: bool = False,
+    ) -> models.Doc:
+        """Get a specific doc by ID.
+        Args:
+            doc_id: The UUID of the doc
+            content_format: Format of content to return ("markdown" or "html")
+            include_html: Whether to include HTML content in response
+        Returns:
+            Doc object
+        """
+        params = None
+        if content_format or include_html:
+            params = {}
+            if content_format:
+                params["content_format"] = content_format
+            if include_html:
+                params["include_html"] = "true"
+        data = self._make_request("GET", f"/documents/{doc_id}", params=params)
+        return models.Doc.from_json(data)
+
+    def create_doc(self, doc: models.CreateDocInput) -> models.Doc:
+        """Create a new doc.
+        Args:
+            doc: Doc parameters
+        Returns:
+            Created Doc object
+        """
+        data = self._make_request("POST", "/documents", json=_clean_dict(doc.__dict__))
+        return models.Doc.from_json(data)
+
+    def update_doc(self, doc_id: str, doc: models.UpdateDocInput) -> models.Doc:
+        """Update an existing doc.
+        Args:
+            doc_id: The UUID of the doc to update
+            doc: Updated doc parameters
+        Returns:
+            Updated Doc object
+        """
+        data = self._make_request(
+            "PUT", f"/documents/{doc_id}", json=_clean_dict(doc.__dict__)
+        )
+        return models.Doc.from_json(data)
+
+    def delete_doc(self, doc_id: str) -> None:
+        """Delete a doc.
+        Args:
+            doc_id: The UUID of the doc to delete
+        """
+        self._make_request("DELETE", f"/documents/{doc_id}")
+
+    def list_document_epics(self, doc_id: str) -> list[models.EpicSlim]:
+        """List all epics related to a document.
+        Args:
+            doc_id: The UUID of the document
+        Returns:
+            List of EpicSlim objects
+        """
+        data = self._make_request("GET", f"/documents/{doc_id}/epics")
+        return [models.EpicSlim.from_json(x) for x in data]
+
+    def link_document_to_epic(self, doc_id: str, epic_id: int) -> None:
+        """Link a document to an epic.
+        Args:
+            doc_id: The UUID of the document
+            epic_id: The ID of the epic
+        """
+        self._make_request("PUT", f"/documents/{doc_id}/epics/{epic_id}")
+
+    def unlink_document_from_epic(self, doc_id: str, epic_id: int) -> None:
+        """Unlink a document from an epic.
+        Args:
+            doc_id: The UUID of the document
+            epic_id: The ID of the epic
+        """
+        self._make_request("DELETE", f"/documents/{doc_id}/epics/{epic_id}")
+
+    ## Entity Templates
+
+    def list_entity_templates(self) -> list[models.EntityTemplate]:
+        """List all entity templates.
+        Returns:
+            List of EntityTemplate objects
+        """
+        data = self._make_request("GET", "/entity-templates")
+        return [models.EntityTemplate.from_json(x) for x in data]
+
+    def get_entity_template(self, template_id: str) -> models.EntityTemplate:
+        """Get a specific entity template by ID.
+        Args:
+            template_id: The UUID of the template
+        Returns:
+            EntityTemplate object
+        """
+        data = self._make_request("GET", f"/entity-templates/{template_id}")
+        return models.EntityTemplate.from_json(data)
+
+    def create_entity_template(
+        self, template: models.CreateEntityTemplateInput
+    ) -> models.EntityTemplate:
+        """Create a new entity template.
+        Args:
+            template: EntityTemplate parameters
+        Returns:
+            Created EntityTemplate object
+        """
+        data = self._make_request(
+            "POST", "/entity-templates", json=_clean_dict(template.__dict__)
+        )
+        return models.EntityTemplate.from_json(data)
+
+    def update_entity_template(
+        self, template_id: str, template: models.UpdateEntityTemplateInput
+    ) -> models.EntityTemplate:
+        """Update an existing entity template.
+        Args:
+            template_id: The UUID of the template to update
+            template: Updated template parameters
+        Returns:
+            Updated EntityTemplate object
+        """
+        data = self._make_request(
+            "PUT",
+            f"/entity-templates/{template_id}",
+            json=_clean_dict(template.__dict__),
+        )
+        return models.EntityTemplate.from_json(data)
+
+    def delete_entity_template(self, template_id: str) -> None:
+        """Delete an entity template.
+        Args:
+            template_id: The UUID of the template to delete
+        """
+        self._make_request("DELETE", f"/entity-templates/{template_id}")
+
+    def enable_story_templates(self) -> None:
+        """Enable the Story Template feature for the Workspace."""
+        self._make_request("PUT", "/entity-templates/enable")
+
+    def disable_story_templates(self) -> None:
+        """Disable the Story Template feature for the Workspace."""
+        self._make_request("PUT", "/entity-templates/disable")
+
+    ## Epic Health
+
+    def get_epic_health(self, epic_id: int) -> models.Health:
+        """Get the current health for an epic.
+        Args:
+            epic_id: The ID of the epic
+        Returns:
+            Health object
+        """
+        data = self._make_request("GET", f"/epics/{epic_id}/health")
+        return models.Health.from_json(data)
+
+    def create_epic_health(
+        self, epic_id: int, health: models.CreateHealthInput
+    ) -> models.Health:
+        """Create a new health status for an epic.
+        Args:
+            epic_id: The ID of the epic
+            health: Health parameters
+        Returns:
+            Created Health object
+        """
+        data = self._make_request(
+            "POST", f"/epics/{epic_id}/health", json=_clean_dict(health.__dict__)
+        )
+        return models.Health.from_json(data)
+
+    def list_epic_health_history(self, epic_id: int) -> list[models.Health]:
+        """List the health history for an epic.
+        Args:
+            epic_id: The ID of the epic
+        Returns:
+            List of Health objects
+        """
+        data = self._make_request("GET", f"/epics/{epic_id}/health-history")
+        return [models.Health.from_json(x) for x in data]
+
+    def update_health(
+        self, health_id: str, health: models.UpdateHealthInput
+    ) -> models.Health:
+        """Update an existing health record.
+        Args:
+            health_id: The UUID of the health record
+            health: Updated health parameters
+        Returns:
+            Updated Health object
+        """
+        data = self._make_request(
+            "PUT", f"/health/{health_id}", json=_clean_dict(health.__dict__)
+        )
+        return models.Health.from_json(data)
+
+    ## Epic Stories
+
+    def list_epic_stories(
+        self, epic_id: int, includes_description: Optional[bool] = None
+    ) -> list[models.StorySlim]:
+        """List all stories in an epic.
+        Args:
+            epic_id: The ID of the epic
+            includes_description: Whether to include story descriptions
+        Returns:
+            List of StorySlim objects
+        """
+        params = {}
+        if includes_description is not None:
+            params["includes_description"] = "true" if includes_description else "false"
+        data = self._make_request("GET", f"/epics/{epic_id}/stories", params=params)
+        return [models.StorySlim.from_json(x) for x in data]
+
+    def list_epics_paginated(
+        self,
+        includes_description: Optional[bool] = None,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+    ) -> dict[str, Any]:
+        """List epics with pagination.
+        Args:
+            includes_description: Whether to include epic descriptions
+            page: The page number to return
+            page_size: The number of epics to return per page
+        Returns:
+            Paginated response with epics
+        """
+        params = {}
+        if includes_description is not None:
+            params["includes_description"] = includes_description
+        if page is not None:
+            params["page"] = page
+        if page_size is not None:
+            params["page_size"] = page_size
+        return self._make_request("GET", "/epics/paginated", params=params)
+
+    def list_epic_documents(self, epic_id: int) -> list[models.DocSlim]:
+        """List all documents related to an epic.
+        Args:
+            epic_id: The ID of the epic
+        Returns:
+            List of DocSlim objects
+        """
+        data = self._make_request("GET", f"/epics/{epic_id}/documents")
+        return [models.DocSlim.from_json(x) for x in data]
+
+    def unlink_productboard_from_epic(self, epic_id: int) -> None:
+        """Unlink a productboard epic.
+        Args:
+            epic_id: The ID of the epic
+        """
+        self._make_request("POST", f"/epics/{epic_id}/unlink-productboard")
+
+    def create_epic_comment_comment(
+        self, epic_id: int, comment_id: int, comment: models.CreateStoryCommentInput
+    ) -> models.ThreadedComment:
+        """Create a nested comment reply to an existing epic comment.
+        Args:
+            epic_id: The ID of the epic
+            comment_id: The ID of the parent comment
+            comment: Comment parameters
+        Returns:
+            Created ThreadedComment object
+        """
+        data = self._make_request(
+            "POST",
+            f"/epics/{epic_id}/comments/{comment_id}",
+            json=_clean_dict(comment.__dict__),
+        )
+        return models.ThreadedComment.from_json(data)
+
+    ## External Link Stories
+
+    def get_external_link_stories(self, external_link: str) -> list[models.StorySlim]:
+        """Get stories which have a given external link associated with them.
+        Args:
+            external_link: The external link URL
+        Returns:
+            List of StorySlim objects
+        """
+        data = self._make_request(
+            "GET", "/external-link/stories", params={"external_link": external_link}
+        )
+        return [models.StorySlim.from_json(x) for x in data]
+
+    ## Group Stories
+
+    def list_group_stories(
+        self, group_id: str, limit: Optional[int] = None, offset: Optional[int] = None
+    ) -> list[models.StorySlim]:
+        """List stories assigned to a group.
+        Args:
+            group_id: The UUID of the group
+            limit: Maximum number of results to return
+            offset: Offset at which to begin returning results
+        Returns:
+            List of StorySlim objects
+        """
+        params = {}
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        data = self._make_request("GET", f"/groups/{group_id}/stories", params=params)
+        return [models.StorySlim.from_json(x) for x in data]
+
+    ## Iteration Stories
+
+    def list_iteration_stories(
+        self, iteration_id: int, includes_description: Optional[bool] = None
+    ) -> list[models.StorySlim]:
+        """List all stories in an iteration.
+        Args:
+            iteration_id: The ID of the iteration
+            includes_description: Whether to include story descriptions
+        Returns:
+            List of StorySlim objects
+        """
+        params = {}
+        if includes_description is not None:
+            params["includes_description"] = includes_description
+        data = self._make_request(
+            "GET", f"/iterations/{iteration_id}/stories", params=params
+        )
+        return [models.StorySlim.from_json(x) for x in data]
+
+    def enable_iterations(self) -> None:
+        """Enable iterations for the current workspace."""
+        self._make_request("PUT", "/iterations/enable")
+
+    def disable_iterations(self) -> None:
+        """Disable iterations for the current workspace."""
+        self._make_request("PUT", "/iterations/disable")
+
+    ## Label Epics and Stories
+
+    def list_label_epics(self, label_id: int) -> list[models.EpicSlim]:
+        """List all epics with a label.
+        Args:
+            label_id: The ID of the label
+        Returns:
+            List of EpicSlim objects
+        """
+        data = self._make_request("GET", f"/labels/{label_id}/epics")
+        return [models.EpicSlim.from_json(x) for x in data]
+
+    def list_label_stories(
+        self, label_id: int, includes_description: Optional[bool] = None
+    ) -> list[models.StorySlim]:
+        """List all stories with a label.
+        Args:
+            label_id: The ID of the label
+            includes_description: Whether to include story descriptions
+        Returns:
+            List of StorySlim objects
+        """
+        params = {}
+        if includes_description is not None:
+            params["includes_description"] = includes_description
+        data = self._make_request("GET", f"/labels/{label_id}/stories", params=params)
+        return [models.StorySlim.from_json(x) for x in data]
+
+    ## Linked Files
+
+    def get_linked_file(self, linked_file_id: int) -> models.LinkedFiles:
+        """Get a specific linked file by ID.
+        Args:
+            linked_file_id: The ID of the linked file
+        Returns:
+            LinkedFiles object
+        """
+        data = self._make_request("GET", f"/linked-files/{linked_file_id}")
+        return models.LinkedFiles.from_json(data)
+
+    ## Objective Epics
+
+    def list_objective_epics(self, objective_id: int) -> list[models.EpicSlim]:
+        """List all epics related to an objective.
+        Args:
+            objective_id: The ID of the objective
+        Returns:
+            List of EpicSlim objects
+        """
+        data = self._make_request("GET", f"/objectives/{objective_id}/epics")
+        return [models.EpicSlim.from_json(x) for x in data]
+
+    ## Project Stories
+
+    def list_project_stories(
+        self, project_id: int, includes_description: Optional[bool] = None
+    ) -> list[models.StorySlim]:
+        """List all stories in a project.
+        Args:
+            project_id: The ID of the project
+            includes_description: Whether to include story descriptions
+        Returns:
+            List of StorySlim objects
+        """
+        params = {}
+        if includes_description is not None:
+            params["includes_description"] = includes_description
+        data = self._make_request(
+            "GET", f"/projects/{project_id}/stories", params=params
+        )
+        return [models.StorySlim.from_json(x) for x in data]
+
+    ## Story History
+
+    def get_story_history(self, story_id: int) -> list[models.StoryHistory]:
+        """Get the history of a story.
+        Args:
+            story_id: The ID of the story
+        Returns:
+            List of StoryHistory objects
+        """
+        data = self._make_request("GET", f"/stories/{story_id}/history")
+        return [models.StoryHistory.from_json(x) for x in data]
+
+    ## Story Sub-tasks
+
+    def list_story_sub_tasks(self, story_id: int) -> list[models.StorySlim]:
+        """List all sub-tasks for a story.
+        Args:
+            story_id: The ID of the story
+        Returns:
+            List of StorySlim objects
+        """
+        data = self._make_request("GET", f"/stories/{story_id}/sub-tasks")
+        return [models.StorySlim.from_json(x) for x in data]
+
+    ## Story Reactions
+
+    def create_story_reaction(self, story_id: int, comment_id: int, emoji: str) -> None:
+        """Create a reaction on a story comment.
+        Args:
+            story_id: The ID of the story
+            comment_id: The ID of the comment
+            emoji: The emoji shortcode (e.g., ":thumbsup:")
+        """
+        self._make_request(
+            "POST",
+            f"/stories/{story_id}/comments/{comment_id}/reactions",
+            json={"emoji": emoji},
+        )
+
+    def delete_story_reaction(self, story_id: int, comment_id: int, emoji: str) -> None:
+        """Delete a reaction from a story comment.
+        Args:
+            story_id: The ID of the story
+            comment_id: The ID of the comment
+            emoji: The emoji shortcode (e.g., ":thumbsup:")
+        """
+        self._make_request(
+            "DELETE",
+            f"/stories/{story_id}/comments/{comment_id}/reactions",
+            json={"emoji": emoji},
+        )
+
+    def unlink_comment_thread_from_slack(self, story_id: int, comment_id: int) -> None:
+        """Unlink a comment thread from Slack.
+        Args:
+            story_id: The ID of the story
+            comment_id: The ID of the comment
+        """
+        self._make_request(
+            "POST", f"/stories/{story_id}/comments/{comment_id}/unlink-from-slack"
+        )
+
+    ## Bulk Story Operations
+
+    def create_multiple_stories(
+        self, stories: list[models.CreateStoryParams]
+    ) -> list[models.StorySlim]:
+        """Create multiple stories at once.
+        Args:
+            stories: List of story parameters
+        Returns:
+            List of created StorySlim objects
+        """
+        data = self._make_request(
+            "POST",
+            "/stories/bulk",
+            json={"stories": [_clean_dict(s.__dict__) for s in stories]},
+        )
+        return [models.StorySlim.from_json(x) for x in data]
+
+    def update_multiple_stories(self, update_input: models.UpdateStoriesInput) -> None:
+        """Update multiple stories at once.
+        Args:
+            update_input: Update parameters including story_ids and fields to update
+        """
+        self._make_request(
+            "PUT", "/stories/bulk", json=_clean_dict(update_input.__dict__)
+        )
+
+    def delete_multiple_stories(self, story_ids: list[int]) -> None:
+        """Delete multiple stories at once.
+        Args:
+            story_ids: List of story IDs to delete
+        """
+        self._make_request("DELETE", "/stories/bulk", json={"story_ids": story_ids})
+
+    def create_story_from_template(
+        self, params: models.CreateStoryFromTemplateInput
+    ) -> models.StorySlim:
+        """Create a story from a template.
+        Args:
+            params: Story from template parameters
+        Returns:
+            Created StorySlim object
+        """
+        data = self._make_request(
+            "POST", "/stories/from-template", json=_clean_dict(params.__dict__)
+        )
+        return models.StorySlim.from_json(data)
+
+    def query_stories(
+        self, query_input: models.QueryStoriesInput
+    ) -> models.StorySearchResults:
+        """Query stories using advanced search via POST.
+        Args:
+            query_input: Query parameters
+        Returns:
+            StorySearchResults object
+        """
+        data = self._make_request(
+            "POST", "/stories/search", json=_clean_dict(query_input.__dict__)
+        )
+        return models.StorySearchResults.from_json(data)
+
+    ## Search Endpoints
+
+    def search_epics(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.EpicSearchResults:
+        """Search for epics.
+        Args:
+            query: Search query string
+            detail: Level of detail ("slim" or "full")
+            page_size: Number of results per page
+        Returns:
+            EpicSearchResults object
+        """
+        params = {"query": query, "detail": detail, "page_size": page_size}
+        data = self._make_request("GET", "/search/epics", params=params)
+        return models.EpicSearchResults.from_json(data)
+
+    def search_iterations(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.IterationSearchResults:
+        """Search for iterations.
+        Args:
+            query: Search query string
+            detail: Level of detail ("slim" or "full")
+            page_size: Number of results per page
+        Returns:
+            IterationSearchResults object
+        """
+        params = {"query": query, "detail": detail, "page_size": page_size}
+        data = self._make_request("GET", "/search/iterations", params=params)
+        return models.IterationSearchResults.from_json(data)
+
+    def search_milestones(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.ObjectiveSearchResults:
+        """Search for milestones (objectives).
+        Args:
+            query: Search query string
+            detail: Level of detail ("slim" or "full")
+            page_size: Number of results per page
+        Returns:
+            ObjectiveSearchResults object
+        """
+        params = {"query": query, "detail": detail, "page_size": page_size}
+        data = self._make_request("GET", "/search/milestones", params=params)
+        return models.ObjectiveSearchResults.from_json(data)
+
+    def search_objectives(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.ObjectiveSearchResults:
+        """Search for objectives.
+        Args:
+            query: Search query string
+            detail: Level of detail ("slim" or "full")
+            page_size: Number of results per page
+        Returns:
+            ObjectiveSearchResults object
+        """
+        params = {"query": query, "detail": detail, "page_size": page_size}
+        data = self._make_request("GET", "/search/objectives", params=params)
+        return models.ObjectiveSearchResults.from_json(data)
+
+    def search_documents(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.DocumentSearchResults:
+        """Search for documents.
+        Args:
+            query: Search query string
+            detail: Level of detail ("slim" or "full")
+            page_size: Number of results per page
+        Returns:
+            DocumentSearchResults object
+        """
+        params = {"query": query, "detail": detail, "page_size": page_size}
+        data = self._make_request("GET", "/search/documents", params=params)
+        return models.DocumentSearchResults.from_json(data)
+
+    ## Generic Integrations (Webhooks)
+
+    def create_generic_integration(
+        self, integration: models.CreateGenericIntegrationInput
+    ) -> None:
+        """Create a generic integration (webhook).
+        Args:
+            integration: Integration parameters
+        """
+        self._make_request(
+            "POST", "/integrations/webhook", json=_clean_dict(integration.__dict__)
+        )
+
+    def get_generic_integration(self, integration_id: int) -> dict[str, Any]:
+        """Get a generic integration by ID.
+        Args:
+            integration_id: The ID of the integration
+        Returns:
+            Integration data
+        """
+        return self._make_request("GET", f"/integrations/webhook/{integration_id}")
+
+    def delete_generic_integration(self, integration_id: int) -> None:
+        """Delete a generic integration.
+        Args:
+            integration_id: The ID of the integration to delete
+        """
+        self._make_request("DELETE", f"/integrations/webhook/{integration_id}")
+
+    ## File Uploads
+
+    def upload_files(
+        self, files: dict[str, Any], story_id: Optional[int] = None
+    ) -> list[models.UploadedFile]:
+        """Upload files to Shortcut.
+        Args:
+            files: Dictionary of file objects to upload (file0, file1, etc.)
+            story_id: Optional story ID to associate files with
+        Returns:
+            List of UploadedFile objects
+        """
+        # This requires multipart/form-data, which is different from normal JSON requests
+        url = f"{self.base_url}/files"
+        data = {"story_id": story_id} if story_id else {}
+        response = self.session.post(url, data=data, files=files)
+        response.raise_for_status()
+        return [models.UploadedFile.from_json(x) for x in response.json()]
+
+    def update_uploaded_file(
+        self, file_id: int, file_update: models.UpdateFileInput
+    ) -> models.UploadedFile:
+        """Update an uploaded file.
+        Args:
+            file_id: The ID of the file to update
+            file_update: Updated file parameters
+        Returns:
+            Updated UploadedFile object
+        """
+        data = self._make_request(
+            "PUT", f"/files/{file_id}", json=_clean_dict(file_update.__dict__)
+        )
+        return models.UploadedFile.from_json(data)

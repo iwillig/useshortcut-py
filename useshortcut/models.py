@@ -614,7 +614,7 @@ class UpdatedLinkedFilesInput:
 @dataclass
 class LinkedFiles:
     id: int
-    global_id: str
+    global_id: Optional[str] = None
     name: Optional[str] = None
 
     content_type: Optional[str] = None
@@ -626,6 +626,13 @@ class LinkedFiles:
     group_mention_ids: Optional[list[str]] = field(default_factory=list)
     member_mention_ids: Optional[list[str]] = field(default_factory=list)
     mention_ids: Optional[list[str]] = field(default_factory=list)
+    story_ids: Optional[list[int]] = field(default_factory=list)
+    url: Optional[str] = None
+    size: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    filename: Optional[str] = None
+    type: Optional[str] = None
+    uploader_id: Optional[str] = None
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> "LinkedFiles":
@@ -1271,9 +1278,32 @@ class UpdateCustomFieldInput:
     after_id: Optional[str] = None
 
 
+# ============================================================================
+# Documents (Docs)
+# ============================================================================
+
+
+@dataclass
+class DocSlim:
+    """A lightweight representation of a Doc."""
+
+    id: str
+    title: Optional[str]
+    app_url: str
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "DocSlim":
+        # Only extract fields we need
+        return cls(
+            id=data["id"],
+            title=data.get("title"),
+            app_url=data["app_url"],
+        )
+
+
 @dataclass
 class Doc:
-    """A document in Shortcut."""
+    """A Doc is a collaborative document in Shortcut."""
 
     id: str
     title: Optional[str]
@@ -1299,19 +1329,6 @@ class Doc:
 
 
 @dataclass
-class DocSlim:
-    """A slimmed-down version of a Doc for list views."""
-
-    id: str
-    title: Optional[str]
-    app_url: str
-
-    @classmethod
-    def from_json(cls, data: dict[str, Any]) -> "DocSlim":
-        return cls(**data)
-
-
-@dataclass
 class CreateDocInput:
     """Request parameters for creating a Doc."""
 
@@ -1327,3 +1344,822 @@ class UpdateDocInput:
     title: Optional[str] = None
     content: Optional[str] = None
     content_format: Optional[str] = None  # "markdown" or "html"
+
+
+# ============================================================================
+# Entity Templates
+# ============================================================================
+
+
+@dataclass
+class StoryContents:
+    """A container entity for the attributes a template should populate."""
+
+    entity_type: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    story_type: Optional[str] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    group_id: Optional[str] = None
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    estimate: Optional[int] = None
+    deadline: Optional[datetime] = None
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    tasks: list[dict[str, Any]] = field(default_factory=list)
+    sub_tasks: list[dict[str, Any]] = field(default_factory=list)
+    linked_files: list[dict[str, Any]] = field(default_factory=list)
+    files: list[dict[str, Any]] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "StoryContents":
+        if "deadline" in data and isinstance(data["deadline"], str):
+            data["deadline"] = datetime.fromisoformat(
+                data["deadline"].replace("Z", "+00:00")
+            )
+        return cls(**data)
+
+
+@dataclass
+class CreateStoryContents:
+    """Request parameters for story contents in a template."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    story_type: Optional[str] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    group_id: Optional[str] = None
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    estimate: Optional[int] = None
+    deadline: Optional[datetime] = None
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    tasks: list[dict[str, Any]] = field(default_factory=list)
+    sub_tasks: list[dict[str, Any]] = field(default_factory=list)
+    file_ids: list[int] = field(default_factory=list)
+    linked_file_ids: list[int] = field(default_factory=list)
+
+
+@dataclass
+class UpdateStoryContents:
+    """Updated attributes for the template to populate."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    story_type: Optional[str] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    group_id: Optional[str] = None
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    estimate: Optional[int] = None
+    deadline: Optional[datetime] = None
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    tasks: list[dict[str, Any]] = field(default_factory=list)
+    sub_tasks: list[dict[str, Any]] = field(default_factory=list)
+    file_ids: list[int] = field(default_factory=list)
+    linked_file_ids: list[int] = field(default_factory=list)
+
+
+@dataclass
+class EntityTemplate:
+    """An entity template can be used to prefill various fields when creating new stories."""
+
+    id: str
+    name: str
+    author_id: str
+    created_at: datetime
+    updated_at: datetime
+    last_used_at: datetime
+    entity_type: str = "entity-template"
+    story_contents: Optional[StoryContents] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "EntityTemplate":
+        # Convert datetime strings
+        for field_name in ["created_at", "updated_at", "last_used_at"]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        if "story_contents" in data and data["story_contents"]:
+            data["story_contents"] = StoryContents.from_json(data["story_contents"])
+        return cls(**data)
+
+
+@dataclass
+class CreateEntityTemplateInput:
+    """Request parameters for creating an entity template."""
+
+    name: str
+    story_contents: dict[str, Any]
+    author_id: Optional[str] = None
+
+
+@dataclass
+class UpdateEntityTemplateInput:
+    """Request parameters for updating an entity template."""
+
+    name: Optional[str] = None
+    story_contents: Optional[dict[str, Any]] = None
+
+
+# ============================================================================
+# Health
+# ============================================================================
+
+
+@dataclass
+class Health:
+    """The current health status of an Epic or Objective."""
+
+    id: Optional[str]
+    status: str  # "At Risk", "On Track", "Off Track", "No Health"
+    entity_type: str = "health"
+    author_id: Optional[str] = None
+    epic_id: Optional[int] = None
+    objective_id: Optional[int] = None
+    text: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "Health":
+        # Convert datetime strings
+        for field_name in ["created_at", "updated_at"]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class CreateHealthInput:
+    """Request parameters for creating a Health record."""
+
+    status: str  # "At Risk", "On Track", "Off Track", "No Health"
+    text: Optional[str] = None
+
+
+@dataclass
+class UpdateHealthInput:
+    """Request parameters for updating a Health record."""
+
+    status: Optional[str] = None
+    text: Optional[str] = None
+
+
+# ============================================================================
+# Slim Models for List Responses
+# ============================================================================
+
+
+@dataclass
+class EpicSlim:
+    """A lightweight representation of an Epic."""
+
+    id: int
+    name: str
+    global_id: str
+    app_url: str
+    archived: bool = False
+    started: bool = False
+    completed: bool = False
+    entity_type: str = "epic"
+    description: Optional[str] = None
+    state: Optional[str] = None
+    epic_state_id: Optional[int] = None
+    milestone_id: Optional[int] = None
+    objective_ids: list[int] = field(default_factory=list)
+    project_ids: list[int] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    group_ids: list[str] = field(default_factory=list)
+    group_id: Optional[str] = None
+    requested_by_id: Optional[str] = None
+    deadline: Optional[datetime] = None
+    planned_start_date: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    started_at_override: Optional[datetime] = None
+    completed_at_override: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    position: Optional[int] = None
+    stats: Optional[dict[str, Any]] = None
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    associated_groups: list[dict[str, Any]] = field(default_factory=list)
+    external_id: Optional[str] = None
+    productboard_id: Optional[str] = None
+    productboard_url: Optional[str] = None
+    productboard_name: Optional[str] = None
+    productboard_plugin_id: Optional[str] = None
+    stories_without_projects: Optional[int] = None
+    mention_ids: list[str] = field(default_factory=list)
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "EpicSlim":
+        # Convert datetime strings
+        for field_name in [
+            "deadline",
+            "planned_start_date",
+            "started_at",
+            "completed_at",
+            "started_at_override",
+            "completed_at_override",
+            "created_at",
+            "updated_at",
+        ]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class StorySlim:
+    """A lightweight representation of a Story."""
+
+    id: int
+    name: str
+    global_id: str
+    app_url: str
+    entity_type: str = "story"
+    story_type: str = "feature"
+    archived: bool = False
+    started: bool = False
+    completed: bool = False
+    blocker: bool = False
+    blocked: bool = False
+    description: Optional[str] = None
+    workflow_id: Optional[int] = None
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    parent_story_id: Optional[int] = None
+    story_template_id: Optional[str] = None
+    requested_by_id: Optional[str] = None
+    group_id: Optional[str] = None
+    estimate: Optional[int] = None
+    position: Optional[int] = None
+    deadline: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    started_at_override: Optional[datetime] = None
+    completed_at_override: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    moved_at: Optional[datetime] = None
+    external_id: Optional[str] = None
+    label_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    task_ids: list[int] = field(default_factory=list)
+    file_ids: list[int] = field(default_factory=list)
+    linked_file_ids: list[int] = field(default_factory=list)
+    comment_ids: list[int] = field(default_factory=list)
+    previous_iteration_ids: list[int] = field(default_factory=list)
+    sub_task_story_ids: list[int] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    story_links: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    stats: Optional[dict[str, Any]] = None
+    num_tasks_completed: Optional[int] = None
+    lead_time: Optional[int] = None
+    cycle_time: Optional[int] = None
+    formatted_vcs_branch_name: Optional[str] = None
+    mention_ids: list[str] = field(default_factory=list)
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "StorySlim":
+        # Convert datetime strings
+        for field_name in [
+            "deadline",
+            "started_at",
+            "completed_at",
+            "started_at_override",
+            "completed_at_override",
+            "created_at",
+            "updated_at",
+            "moved_at",
+        ]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class IterationSlim:
+    """A lightweight representation of an Iteration."""
+
+    id: int
+    name: str
+    global_id: str
+    app_url: str
+    status: str
+    entity_type: str = "iteration"
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    label_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    group_ids: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    associated_groups: list[dict[str, Any]] = field(default_factory=list)
+    stats: Optional[dict[str, Any]] = None
+    mention_ids: list[str] = field(default_factory=list)
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "IterationSlim":
+        # Convert datetime strings
+        for field_name in ["start_date", "end_date", "created_at", "updated_at"]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+# ============================================================================
+# Search Results
+# ============================================================================
+
+
+@dataclass
+class EpicSearchResult:
+    """A single Epic search result."""
+
+    id: int
+    name: str
+    entity_type: str = "epic"
+    description: Optional[str] = None
+    app_url: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    deadline: Optional[datetime] = None
+    state: Optional[str] = None
+    epic_state_id: Optional[int] = None
+    milestone_id: Optional[int] = None
+    objective_ids: list[int] = field(default_factory=list)
+    project_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "EpicSearchResult":
+        for field_name in [
+            "created_at",
+            "updated_at",
+            "completed_at",
+            "started_at",
+            "deadline",
+        ]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class StorySearchResult:
+    """A single Story search result."""
+
+    id: int
+    name: str
+    entity_type: str = "story"
+    story_type: str = "feature"
+    description: Optional[str] = None
+    app_url: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    deadline: Optional[datetime] = None
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    estimate: Optional[int] = None
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "StorySearchResult":
+        for field_name in [
+            "created_at",
+            "updated_at",
+            "completed_at",
+            "started_at",
+            "deadline",
+        ]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class StorySearchResults:
+    """The results of a Story search query."""
+
+    total: int
+    data: list[StorySearchResult]
+    next: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "StorySearchResults":
+        if "data" in data:
+            data["data"] = [StorySearchResult.from_json(x) for x in data["data"]]
+        return cls(**data)
+
+
+@dataclass
+class EpicSearchResults:
+    """The results of an Epic search query."""
+
+    total: int
+    data: list[EpicSearchResult]
+    next: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "EpicSearchResults":
+        if "data" in data:
+            data["data"] = [EpicSearchResult.from_json(x) for x in data["data"]]
+        return cls(**data)
+
+
+@dataclass
+class IterationSearchResults:
+    """The results of an Iteration search query."""
+
+    total: int
+    data: list[IterationSlim]
+    next: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "IterationSearchResults":
+        if "data" in data:
+            data["data"] = [IterationSlim.from_json(x) for x in data["data"]]
+        return cls(**data)
+
+
+@dataclass
+class ObjectiveSearchResults:
+    """The results of an Objective (Milestone) search query."""
+
+    total: int
+    data: list[Objective]
+    next: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "ObjectiveSearchResults":
+        if "data" in data:
+            data["data"] = [Objective.from_json(x) for x in data["data"]]
+        return cls(**data)
+
+
+@dataclass
+class DocumentSearchResults:
+    """The results of a Document search query."""
+
+    total: int
+    data: list[DocSlim]
+    next: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "DocumentSearchResults":
+        if "data" in data:
+            data["data"] = [DocSlim.from_json(x) for x in data["data"]]
+        return cls(**data)
+
+
+@dataclass
+class SearchResults:
+    """The results of a multi-entity search query."""
+
+    epics: Optional[EpicSearchResults] = None
+    stories: Optional[StorySearchResults] = None
+    iterations: Optional[IterationSearchResults] = None
+    milestones: Optional[ObjectiveSearchResults] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "SearchResults":
+        if "epics" in data and data["epics"]:
+            data["epics"] = EpicSearchResults.from_json(data["epics"])
+        if "stories" in data and data["stories"]:
+            data["stories"] = StorySearchResults.from_json(data["stories"])
+        if "iterations" in data and data["iterations"]:
+            data["iterations"] = IterationSearchResults.from_json(data["iterations"])
+        if "milestones" in data and data["milestones"]:
+            data["milestones"] = ObjectiveSearchResults.from_json(data["milestones"])
+        return cls(**data)
+
+
+# ============================================================================
+# Story History
+# ============================================================================
+
+
+@dataclass
+class StoryHistory:
+    """Historical changes to a Story."""
+
+    id: int
+    entity_type: str = "story-history"
+    story_id: Optional[int] = None
+    member_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    changed_at: Optional[datetime] = None
+    actions: list[dict[str, Any]] = field(default_factory=list)
+    external_id: Optional[str] = None
+    version: Optional[str] = None
+    subject_type: Optional[str] = None
+    subject_id: Optional[int] = None
+    changes: Optional[dict[str, Any]] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    story_type: Optional[str] = None
+    workflow_state_id: Optional[int] = None
+    archived: Optional[bool] = None
+    position: Optional[int] = None
+    started: Optional[bool] = None
+    completed: Optional[bool] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    estimate: Optional[int] = None
+    deadline: Optional[datetime] = None
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    label_ids: Optional[list[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    group_id: Optional[str] = None
+    group_ids: Optional[list[str]] = None
+    blocked: Optional[bool] = None
+    blocker: Optional[bool] = None
+    branch_ids: Optional[list[int]] = None
+    commit_ids: Optional[list[int]] = None
+    pull_request_ids: Optional[list[int]] = None
+    file_ids: Optional[list[int]] = None
+    linked_file_ids: Optional[list[int]] = None
+    app_url: Optional[str] = None
+    mention_ids: Optional[list[str]] = None
+    member_mention_ids: Optional[list[str]] = None
+    group_mention_ids: Optional[list[str]] = None
+    primary_id: Optional[int] = None
+    references_id: Optional[int] = None
+    references: Optional[list[dict[str, Any]]] = None
+    revert: Optional[bool] = None
+    actor_name: Optional[str] = None
+    actor_id: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "StoryHistory":
+        for field_name in [
+            "created_at",
+            "updated_at",
+            "changed_at",
+            "started_at",
+            "completed_at",
+            "deadline",
+        ]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+# ============================================================================
+# Bulk Operations
+# ============================================================================
+
+
+@dataclass
+class CreateStoriesInput:
+    """Request parameters for creating multiple stories."""
+
+    stories: list[CreateStoryParams]
+
+
+@dataclass
+class UpdateStoriesInput:
+    """Request parameters for updating multiple stories."""
+
+    story_ids: list[int]
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    group_id: Optional[str] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
+    archived: Optional[bool] = None
+    story_type: Optional[str] = None
+    estimate: Optional[int] = None
+    deadline: Optional[datetime] = None
+
+
+@dataclass
+class DeleteStoriesInput:
+    """Request parameters for deleting multiple stories."""
+
+    story_ids: list[int]
+
+
+# ============================================================================
+# Story From Template
+# ============================================================================
+
+
+@dataclass
+class CreateStoryFromTemplateInput:
+    """Request parameters for creating a story from a template."""
+
+    story_template_id: str
+    name: Optional[str] = None
+    description: Optional[str] = None
+    workflow_state_id: Optional[int] = None
+    project_id: Optional[int] = None
+    epic_id: Optional[int] = None
+    iteration_id: Optional[int] = None
+    group_id: Optional[str] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
+    estimate: Optional[int] = None
+    deadline: Optional[datetime] = None
+    external_id: Optional[str] = None
+    archived: Optional[bool] = None
+    story_type: Optional[str] = None
+
+
+# ============================================================================
+# Reactions
+# ============================================================================
+
+
+@dataclass
+class CreateReactionInput:
+    """Request parameters for creating a reaction on a comment."""
+
+    emoji: str
+
+
+@dataclass
+class DeleteReactionInput:
+    """Request parameters for deleting a reaction from a comment."""
+
+    emoji: str
+
+
+# ============================================================================
+# Generic Integration (Webhook)
+# ============================================================================
+
+
+@dataclass
+class GenericIntegration:
+    """A generic integration (webhook)."""
+
+    id: int
+    name: str
+    url: str
+    entity_type: str = "integration"
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "GenericIntegration":
+        for field_name in ["created_at", "updated_at"]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class CreateGenericIntegrationInput:
+    """Request parameters for creating a generic integration."""
+
+    name: str
+    url: str
+
+
+# ============================================================================
+# Query Stories (Advanced Search)
+# ============================================================================
+
+
+@dataclass
+class QueryStoriesInput:
+    """Request parameters for querying stories via POST."""
+
+    query: str
+    detail: str = "slim"  # "slim" or "full"
+    page_size: int = 25
+    next: Optional[str] = None
+
+
+# ============================================================================
+# UploadedFile (for file uploads)
+# ============================================================================
+
+
+@dataclass
+class UploadedFile:
+    """A file that has been uploaded to Shortcut."""
+
+    id: int
+    name: str
+    content_type: str
+    size: int
+    filename: str
+    url: str
+    entity_type: str = "uploaded-file"
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    uploader_id: Optional[str] = None
+    description: Optional[str] = None
+    external_id: Optional[str] = None
+    story_ids: list[int] = field(default_factory=list)
+    thumbnail_url: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "UploadedFile":
+        for field_name in ["created_at", "updated_at"]:
+            if field_name in data and isinstance(data[field_name], str):
+                data[field_name] = datetime.fromisoformat(
+                    data[field_name].replace("Z", "+00:00")
+                )
+        return cls(**data)
+
+
+@dataclass
+class UpdateFileInput:
+    """Request parameters for updating a file."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    external_id: Optional[str] = None
+
+
+# ============================================================================
+# LabelSlim
+# ============================================================================
+
+
+@dataclass
+class LabelSlim:
+    """A lightweight representation of a Label."""
+
+    id: int
+    name: str
+    entity_type: str = "label"
+    color: Optional[str] = None
+    description: Optional[str] = None
+    external_id: Optional[str] = None
+    archived: bool = False
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> "LabelSlim":
+        return cls(**data)

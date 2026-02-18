@@ -754,86 +754,6 @@ class APIClient:
         """
         self._make_request("DELETE", f"/custom-fields/{custom_field_id}")
 
-    ## Documents (Docs)
-
-    def list_docs(self) -> list[models.DocSlim]:
-        """List all documents.
-        Returns:
-            List of DocSlim objects
-        """
-        data = self._make_request("GET", "/documents")
-        return [models.DocSlim.from_json(x) for x in data]
-
-    def get_doc(self, doc_id: str, include_html: bool = False) -> models.Doc:
-        """Get a specific document by ID.
-        Args:
-            doc_id: The UUID of the document
-            include_html: Whether to include HTML content in the response
-        Returns:
-            Doc object
-        """
-        params = {"include_html": "true"} if include_html else None
-        data = self._make_request("GET", f"/documents/{doc_id}", params=params)
-        return models.Doc.from_json(data)
-
-    def create_doc(self, doc: models.CreateDocInput) -> models.Doc:
-        """Create a new document.
-        Args:
-            doc: Document parameters
-        Returns:
-            Created Doc object
-        """
-        data = self._make_request("POST", "/documents", json=_clean_dict(doc.__dict__))
-        return models.Doc.from_json(data)
-
-    def update_doc(self, doc_id: str, doc: models.UpdateDocInput) -> models.Doc:
-        """Update an existing document.
-        Args:
-            doc_id: The UUID of the document to update
-            doc: Updated document parameters
-        Returns:
-            Updated Doc object
-        """
-        data = self._make_request(
-            "PUT", f"/documents/{doc_id}", json=_clean_dict(doc.__dict__)
-        )
-        return models.Doc.from_json(data)
-
-    def delete_doc(self, doc_id: str) -> None:
-        """Delete a document.
-        Args:
-            doc_id: The UUID of the document to delete
-        """
-        self._make_request("DELETE", f"/documents/{doc_id}")
-
-    def list_document_epics(self, doc_id: str) -> list[models.Epic]:
-        """List all epics associated with a document.
-        Args:
-            doc_id: The UUID of the document
-        Returns:
-            List of Epic objects
-        """
-        data = self._make_request("GET", f"/documents/{doc_id}/epics")
-        return [models.Epic.from_json(x) for x in data]
-
-    def link_document_to_epic(self, doc_id: str, epic_id: int) -> None:
-        """Link a document to an epic.
-        Args:
-            doc_id: The UUID of the document
-            epic_id: The ID of the epic to link to
-        """
-        self._make_request("PUT", f"/documents/{doc_id}/epics/{epic_id}")
-
-    def unlink_document_from_epic(self, doc_id: str, epic_id: int) -> None:
-        """Unlink a document from an epic.
-        Args:
-            doc_id: The UUID of the document
-            epic_id: The ID of the epic to unlink from
-        """
-        self._make_request("DELETE", f"/documents/{doc_id}/epics/{epic_id}")
-
-    ## Story Comments
-
     def list_story_comments(self, story_id: int) -> list[models.StoryComment]:
         """List all comments for a story.
         Args:
@@ -1116,7 +1036,7 @@ class APIClient:
         data = self._make_request("GET", f"/categories/{category_id}/milestones")
         return [models.Milestone.from_json(x) for x in data]
 
-    def list_category_objectives(self, category_id: int) -> List[models.Objective]:
+    def list_category_objectives(self, category_id: int) -> list[models.Objective]:
         """List all objectives in a category.
         Args:
             category_id: The ID of the category
@@ -1128,7 +1048,7 @@ class APIClient:
 
     ## Documents (Docs)
 
-    def list_docs(self) -> List[models.DocSlim]:
+    def list_docs(self) -> list[models.DocSlim]:
         """List all docs.
         Returns:
             List of DocSlim objects
@@ -1136,29 +1056,39 @@ class APIClient:
         data = self._make_request("GET", "/documents")
         return [models.DocSlim.from_json(x) for x in data]
 
-    def get_doc(self, doc_id: str, content_format: Optional[str] = None) -> models.Doc:
+    def get_doc(
+        self,
+        doc_id: str,
+        content_format: Optional[str] = None,
+        include_html: bool = False,
+    ) -> models.Doc:
         """Get a specific doc by ID.
         Args:
             doc_id: The UUID of the doc
             content_format: Format of content to return ("markdown" or "html")
+            include_html: Whether to include HTML content in response
         Returns:
             Doc object
         """
-        params = {}
-        if content_format:
-            params["content_format"] = content_format
+        params = None
+        if content_format or include_html:
+            params = {}
+            if content_format:
+                params["content_format"] = content_format
+            if include_html:
+                params["include_html"] = "true"
         data = self._make_request("GET", f"/documents/{doc_id}", params=params)
         return models.Doc.from_json(data)
 
-    def create_doc(self, doc: models.CreateDocInput) -> models.DocSlim:
+    def create_doc(self, doc: models.CreateDocInput) -> models.Doc:
         """Create a new doc.
         Args:
             doc: Doc parameters
         Returns:
-            Created DocSlim object
+            Created Doc object
         """
         data = self._make_request("POST", "/documents", json=_clean_dict(doc.__dict__))
-        return models.DocSlim.from_json(data)
+        return models.Doc.from_json(data)
 
     def update_doc(self, doc_id: str, doc: models.UpdateDocInput) -> models.Doc:
         """Update an existing doc.
@@ -1180,7 +1110,7 @@ class APIClient:
         """
         self._make_request("DELETE", f"/documents/{doc_id}")
 
-    def list_document_epics(self, doc_id: str) -> List[models.EpicSlim]:
+    def list_document_epics(self, doc_id: str) -> list[models.EpicSlim]:
         """List all epics related to a document.
         Args:
             doc_id: The UUID of the document
@@ -1208,7 +1138,7 @@ class APIClient:
 
     ## Entity Templates
 
-    def list_entity_templates(self) -> List[models.EntityTemplate]:
+    def list_entity_templates(self) -> list[models.EntityTemplate]:
         """List all entity templates.
         Returns:
             List of EntityTemplate objects
@@ -1251,7 +1181,9 @@ class APIClient:
             Updated EntityTemplate object
         """
         data = self._make_request(
-            "PUT", f"/entity-templates/{template_id}", json=_clean_dict(template.__dict__)
+            "PUT",
+            f"/entity-templates/{template_id}",
+            json=_clean_dict(template.__dict__),
         )
         return models.EntityTemplate.from_json(data)
 
@@ -1297,7 +1229,7 @@ class APIClient:
         )
         return models.Health.from_json(data)
 
-    def list_epic_health_history(self, epic_id: int) -> List[models.Health]:
+    def list_epic_health_history(self, epic_id: int) -> list[models.Health]:
         """List the health history for an epic.
         Args:
             epic_id: The ID of the epic
@@ -1307,7 +1239,9 @@ class APIClient:
         data = self._make_request("GET", f"/epics/{epic_id}/health-history")
         return [models.Health.from_json(x) for x in data]
 
-    def update_health(self, health_id: str, health: models.UpdateHealthInput) -> models.Health:
+    def update_health(
+        self, health_id: str, health: models.UpdateHealthInput
+    ) -> models.Health:
         """Update an existing health record.
         Args:
             health_id: The UUID of the health record
@@ -1324,7 +1258,7 @@ class APIClient:
 
     def list_epic_stories(
         self, epic_id: int, includes_description: Optional[bool] = None
-    ) -> List[models.StorySlim]:
+    ) -> list[models.StorySlim]:
         """List all stories in an epic.
         Args:
             epic_id: The ID of the epic
@@ -1343,7 +1277,7 @@ class APIClient:
         includes_description: Optional[bool] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """List epics with pagination.
         Args:
             includes_description: Whether to include epic descriptions
@@ -1361,7 +1295,7 @@ class APIClient:
             params["page_size"] = page_size
         return self._make_request("GET", "/epics/paginated", params=params)
 
-    def list_epic_documents(self, epic_id: int) -> List[models.DocSlim]:
+    def list_epic_documents(self, epic_id: int) -> list[models.DocSlim]:
         """List all documents related to an epic.
         Args:
             epic_id: The ID of the epic
@@ -1398,7 +1332,7 @@ class APIClient:
 
     ## External Link Stories
 
-    def get_external_link_stories(self, external_link: str) -> List[models.StorySlim]:
+    def get_external_link_stories(self, external_link: str) -> list[models.StorySlim]:
         """Get stories which have a given external link associated with them.
         Args:
             external_link: The external link URL
@@ -1414,7 +1348,7 @@ class APIClient:
 
     def list_group_stories(
         self, group_id: str, limit: Optional[int] = None, offset: Optional[int] = None
-    ) -> List[models.StorySlim]:
+    ) -> list[models.StorySlim]:
         """List stories assigned to a group.
         Args:
             group_id: The UUID of the group
@@ -1435,7 +1369,7 @@ class APIClient:
 
     def list_iteration_stories(
         self, iteration_id: int, includes_description: Optional[bool] = None
-    ) -> List[models.StorySlim]:
+    ) -> list[models.StorySlim]:
         """List all stories in an iteration.
         Args:
             iteration_id: The ID of the iteration
@@ -1461,7 +1395,7 @@ class APIClient:
 
     ## Label Epics and Stories
 
-    def list_label_epics(self, label_id: int) -> List[models.EpicSlim]:
+    def list_label_epics(self, label_id: int) -> list[models.EpicSlim]:
         """List all epics with a label.
         Args:
             label_id: The ID of the label
@@ -1473,7 +1407,7 @@ class APIClient:
 
     def list_label_stories(
         self, label_id: int, includes_description: Optional[bool] = None
-    ) -> List[models.StorySlim]:
+    ) -> list[models.StorySlim]:
         """List all stories with a label.
         Args:
             label_id: The ID of the label
@@ -1501,7 +1435,7 @@ class APIClient:
 
     ## Objective Epics
 
-    def list_objective_epics(self, objective_id: int) -> List[models.EpicSlim]:
+    def list_objective_epics(self, objective_id: int) -> list[models.EpicSlim]:
         """List all epics related to an objective.
         Args:
             objective_id: The ID of the objective
@@ -1515,7 +1449,7 @@ class APIClient:
 
     def list_project_stories(
         self, project_id: int, includes_description: Optional[bool] = None
-    ) -> List[models.StorySlim]:
+    ) -> list[models.StorySlim]:
         """List all stories in a project.
         Args:
             project_id: The ID of the project
@@ -1533,7 +1467,7 @@ class APIClient:
 
     ## Story History
 
-    def get_story_history(self, story_id: int) -> List[models.StoryHistory]:
+    def get_story_history(self, story_id: int) -> list[models.StoryHistory]:
         """Get the history of a story.
         Args:
             story_id: The ID of the story
@@ -1545,7 +1479,7 @@ class APIClient:
 
     ## Story Sub-tasks
 
-    def list_story_sub_tasks(self, story_id: int) -> List[models.StorySlim]:
+    def list_story_sub_tasks(self, story_id: int) -> list[models.StorySlim]:
         """List all sub-tasks for a story.
         Args:
             story_id: The ID of the story
@@ -1557,9 +1491,7 @@ class APIClient:
 
     ## Story Reactions
 
-    def create_story_reaction(
-        self, story_id: int, comment_id: int, emoji: str
-    ) -> None:
+    def create_story_reaction(self, story_id: int, comment_id: int, emoji: str) -> None:
         """Create a reaction on a story comment.
         Args:
             story_id: The ID of the story
@@ -1572,9 +1504,7 @@ class APIClient:
             json={"emoji": emoji},
         )
 
-    def delete_story_reaction(
-        self, story_id: int, comment_id: int, emoji: str
-    ) -> None:
+    def delete_story_reaction(self, story_id: int, comment_id: int, emoji: str) -> None:
         """Delete a reaction from a story comment.
         Args:
             story_id: The ID of the story
@@ -1587,9 +1517,7 @@ class APIClient:
             json={"emoji": emoji},
         )
 
-    def unlink_comment_thread_from_slack(
-        self, story_id: int, comment_id: int
-    ) -> None:
+    def unlink_comment_thread_from_slack(self, story_id: int, comment_id: int) -> None:
         """Unlink a comment thread from Slack.
         Args:
             story_id: The ID of the story
@@ -1602,8 +1530,8 @@ class APIClient:
     ## Bulk Story Operations
 
     def create_multiple_stories(
-        self, stories: List[models.CreateStoryParams]
-    ) -> List[models.StorySlim]:
+        self, stories: list[models.CreateStoryParams]
+    ) -> list[models.StorySlim]:
         """Create multiple stories at once.
         Args:
             stories: List of story parameters
@@ -1611,7 +1539,9 @@ class APIClient:
             List of created StorySlim objects
         """
         data = self._make_request(
-            "POST", "/stories/bulk", json={"stories": [_clean_dict(s.__dict__) for s in stories]}
+            "POST",
+            "/stories/bulk",
+            json={"stories": [_clean_dict(s.__dict__) for s in stories]},
         )
         return [models.StorySlim.from_json(x) for x in data]
 
@@ -1620,9 +1550,11 @@ class APIClient:
         Args:
             update_input: Update parameters including story_ids and fields to update
         """
-        self._make_request("PUT", "/stories/bulk", json=_clean_dict(update_input.__dict__))
+        self._make_request(
+            "PUT", "/stories/bulk", json=_clean_dict(update_input.__dict__)
+        )
 
-    def delete_multiple_stories(self, story_ids: List[int]) -> None:
+    def delete_multiple_stories(self, story_ids: list[int]) -> None:
         """Delete multiple stories at once.
         Args:
             story_ids: List of story IDs to delete
@@ -1643,7 +1575,9 @@ class APIClient:
         )
         return models.StorySlim.from_json(data)
 
-    def query_stories(self, query_input: models.QueryStoriesInput) -> models.StorySearchResults:
+    def query_stories(
+        self, query_input: models.QueryStoriesInput
+    ) -> models.StorySearchResults:
         """Query stories using advanced search via POST.
         Args:
             query_input: Query parameters
@@ -1657,7 +1591,9 @@ class APIClient:
 
     ## Search Endpoints
 
-    def search_epics(self, query: str, detail: str = "slim", page_size: int = 25) -> models.EpicSearchResults:
+    def search_epics(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.EpicSearchResults:
         """Search for epics.
         Args:
             query: Search query string
@@ -1670,7 +1606,9 @@ class APIClient:
         data = self._make_request("GET", "/search/epics", params=params)
         return models.EpicSearchResults.from_json(data)
 
-    def search_iterations(self, query: str, detail: str = "slim", page_size: int = 25) -> models.IterationSearchResults:
+    def search_iterations(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.IterationSearchResults:
         """Search for iterations.
         Args:
             query: Search query string
@@ -1683,7 +1621,9 @@ class APIClient:
         data = self._make_request("GET", "/search/iterations", params=params)
         return models.IterationSearchResults.from_json(data)
 
-    def search_milestones(self, query: str, detail: str = "slim", page_size: int = 25) -> models.ObjectiveSearchResults:
+    def search_milestones(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.ObjectiveSearchResults:
         """Search for milestones (objectives).
         Args:
             query: Search query string
@@ -1696,7 +1636,9 @@ class APIClient:
         data = self._make_request("GET", "/search/milestones", params=params)
         return models.ObjectiveSearchResults.from_json(data)
 
-    def search_objectives(self, query: str, detail: str = "slim", page_size: int = 25) -> models.ObjectiveSearchResults:
+    def search_objectives(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.ObjectiveSearchResults:
         """Search for objectives.
         Args:
             query: Search query string
@@ -1709,7 +1651,9 @@ class APIClient:
         data = self._make_request("GET", "/search/objectives", params=params)
         return models.ObjectiveSearchResults.from_json(data)
 
-    def search_documents(self, query: str, detail: str = "slim", page_size: int = 25) -> models.DocumentSearchResults:
+    def search_documents(
+        self, query: str, detail: str = "slim", page_size: int = 25
+    ) -> models.DocumentSearchResults:
         """Search for documents.
         Args:
             query: Search query string
@@ -1735,7 +1679,7 @@ class APIClient:
             "POST", "/integrations/webhook", json=_clean_dict(integration.__dict__)
         )
 
-    def get_generic_integration(self, integration_id: int) -> Dict[str, Any]:
+    def get_generic_integration(self, integration_id: int) -> dict[str, Any]:
         """Get a generic integration by ID.
         Args:
             integration_id: The ID of the integration
@@ -1754,8 +1698,8 @@ class APIClient:
     ## File Uploads
 
     def upload_files(
-        self, files: Dict[str, Any], story_id: Optional[int] = None
-    ) -> List[models.UploadedFile]:
+        self, files: dict[str, Any], story_id: Optional[int] = None
+    ) -> list[models.UploadedFile]:
         """Upload files to Shortcut.
         Args:
             files: Dictionary of file objects to upload (file0, file1, etc.)

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, Generic, List, Optional, TypeVar
+from typing import Any, Generic, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -623,10 +623,10 @@ class LinkedFiles:
     description: Optional[str] = None
     entity_type: str = "linked-file"
 
-    group_mention_ids: Optional[List[str]] = field(default_factory=list)
-    member_mention_ids: Optional[List[str]] = field(default_factory=list)
-    mention_ids: Optional[List[str]] = field(default_factory=list)
-    story_ids: Optional[List[int]] = field(default_factory=list)
+    group_mention_ids: Optional[list[str]] = field(default_factory=list)
+    member_mention_ids: Optional[list[str]] = field(default_factory=list)
+    mention_ids: Optional[list[str]] = field(default_factory=list)
+    story_ids: Optional[list[int]] = field(default_factory=list)
     url: Optional[str] = None
     size: Optional[int] = None
     thumbnail_url: Optional[str] = None
@@ -1282,6 +1282,7 @@ class UpdateCustomFieldInput:
 # Documents (Docs)
 # ============================================================================
 
+
 @dataclass
 class DocSlim:
     """A lightweight representation of a Doc."""
@@ -1291,8 +1292,13 @@ class DocSlim:
     app_url: str
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "DocSlim":
-        return cls(**data)
+    def from_json(cls, data: dict[str, Any]) -> "DocSlim":
+        # Only extract fields we need
+        return cls(
+            id=data["id"],
+            title=data.get("title"),
+            app_url=data["app_url"],
+        )
 
 
 @dataclass
@@ -1309,7 +1315,7 @@ class Doc:
     content_html: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Doc":
+    def from_json(cls, data: dict[str, Any]) -> "Doc":
         # Convert datetime strings
         if "created_at" in data and isinstance(data["created_at"], str):
             data["created_at"] = datetime.fromisoformat(
@@ -1344,6 +1350,7 @@ class UpdateDocInput:
 # Entity Templates
 # ============================================================================
 
+
 @dataclass
 class StoryContents:
     """A container entity for the attributes a template should populate."""
@@ -1359,19 +1366,19 @@ class StoryContents:
     project_id: Optional[int] = None
     estimate: Optional[int] = None
     deadline: Optional[datetime] = None
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    label_ids: List[int] = field(default_factory=list)
-    labels: List[Dict[str, Any]] = field(default_factory=list)
-    custom_fields: List[Dict[str, Any]] = field(default_factory=list)
-    external_links: List[str] = field(default_factory=list)
-    tasks: List[Dict[str, Any]] = field(default_factory=list)
-    sub_tasks: List[Dict[str, Any]] = field(default_factory=list)
-    linked_files: List[Dict[str, Any]] = field(default_factory=list)
-    files: List[Dict[str, Any]] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    tasks: list[dict[str, Any]] = field(default_factory=list)
+    sub_tasks: list[dict[str, Any]] = field(default_factory=list)
+    linked_files: list[dict[str, Any]] = field(default_factory=list)
+    files: list[dict[str, Any]] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StoryContents":
+    def from_json(cls, data: dict[str, Any]) -> "StoryContents":
         if "deadline" in data and isinstance(data["deadline"], str):
             data["deadline"] = datetime.fromisoformat(
                 data["deadline"].replace("Z", "+00:00")
@@ -1393,15 +1400,15 @@ class CreateStoryContents:
     project_id: Optional[int] = None
     estimate: Optional[int] = None
     deadline: Optional[datetime] = None
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    labels: List[Dict[str, Any]] = field(default_factory=list)
-    custom_fields: List[Dict[str, Any]] = field(default_factory=list)
-    external_links: List[str] = field(default_factory=list)
-    tasks: List[Dict[str, Any]] = field(default_factory=list)
-    sub_tasks: List[Dict[str, Any]] = field(default_factory=list)
-    file_ids: List[int] = field(default_factory=list)
-    linked_file_ids: List[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    tasks: list[dict[str, Any]] = field(default_factory=list)
+    sub_tasks: list[dict[str, Any]] = field(default_factory=list)
+    file_ids: list[int] = field(default_factory=list)
+    linked_file_ids: list[int] = field(default_factory=list)
 
 
 @dataclass
@@ -1418,15 +1425,15 @@ class UpdateStoryContents:
     project_id: Optional[int] = None
     estimate: Optional[int] = None
     deadline: Optional[datetime] = None
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    labels: List[Dict[str, Any]] = field(default_factory=list)
-    custom_fields: List[Dict[str, Any]] = field(default_factory=list)
-    external_links: List[str] = field(default_factory=list)
-    tasks: List[Dict[str, Any]] = field(default_factory=list)
-    sub_tasks: List[Dict[str, Any]] = field(default_factory=list)
-    file_ids: List[int] = field(default_factory=list)
-    linked_file_ids: List[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    tasks: list[dict[str, Any]] = field(default_factory=list)
+    sub_tasks: list[dict[str, Any]] = field(default_factory=list)
+    file_ids: list[int] = field(default_factory=list)
+    linked_file_ids: list[int] = field(default_factory=list)
 
 
 @dataclass
@@ -1443,7 +1450,7 @@ class EntityTemplate:
     story_contents: Optional[StoryContents] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "EntityTemplate":
+    def from_json(cls, data: dict[str, Any]) -> "EntityTemplate":
         # Convert datetime strings
         for field_name in ["created_at", "updated_at", "last_used_at"]:
             if field_name in data and isinstance(data[field_name], str):
@@ -1460,7 +1467,7 @@ class CreateEntityTemplateInput:
     """Request parameters for creating an entity template."""
 
     name: str
-    story_contents: Dict[str, Any]
+    story_contents: dict[str, Any]
     author_id: Optional[str] = None
 
 
@@ -1469,12 +1476,13 @@ class UpdateEntityTemplateInput:
     """Request parameters for updating an entity template."""
 
     name: Optional[str] = None
-    story_contents: Optional[Dict[str, Any]] = None
+    story_contents: Optional[dict[str, Any]] = None
 
 
 # ============================================================================
 # Health
 # ============================================================================
+
 
 @dataclass
 class Health:
@@ -1491,7 +1499,7 @@ class Health:
     updated_at: Optional[datetime] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "Health":
+    def from_json(cls, data: dict[str, Any]) -> "Health":
         # Convert datetime strings
         for field_name in ["created_at", "updated_at"]:
             if field_name in data and isinstance(data[field_name], str):
@@ -1521,6 +1529,7 @@ class UpdateHealthInput:
 # Slim Models for List Responses
 # ============================================================================
 
+
 @dataclass
 class EpicSlim:
     """A lightweight representation of an Epic."""
@@ -1529,20 +1538,20 @@ class EpicSlim:
     name: str
     global_id: str
     app_url: str
-    archived: bool
-    started: bool
-    completed: bool
+    archived: bool = False
+    started: bool = False
+    completed: bool = False
     entity_type: str = "epic"
     description: Optional[str] = None
     state: Optional[str] = None
     epic_state_id: Optional[int] = None
     milestone_id: Optional[int] = None
-    objective_ids: List[int] = field(default_factory=list)
-    project_ids: List[int] = field(default_factory=list)
-    label_ids: List[int] = field(default_factory=list)
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    group_ids: List[str] = field(default_factory=list)
+    objective_ids: list[int] = field(default_factory=list)
+    project_ids: list[int] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    group_ids: list[str] = field(default_factory=list)
     group_id: Optional[str] = None
     requested_by_id: Optional[str] = None
     deadline: Optional[datetime] = None
@@ -1554,25 +1563,31 @@ class EpicSlim:
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     position: Optional[int] = None
-    stats: Optional[Dict[str, Any]] = None
-    labels: List[Dict[str, Any]] = field(default_factory=list)
-    associated_groups: List[Dict[str, Any]] = field(default_factory=list)
+    stats: Optional[dict[str, Any]] = None
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    associated_groups: list[dict[str, Any]] = field(default_factory=list)
     external_id: Optional[str] = None
     productboard_id: Optional[str] = None
     productboard_url: Optional[str] = None
     productboard_name: Optional[str] = None
     productboard_plugin_id: Optional[str] = None
     stories_without_projects: Optional[int] = None
-    mention_ids: List[str] = field(default_factory=list)
-    member_mention_ids: List[str] = field(default_factory=list)
-    group_mention_ids: List[str] = field(default_factory=list)
+    mention_ids: list[str] = field(default_factory=list)
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "EpicSlim":
+    def from_json(cls, data: dict[str, Any]) -> "EpicSlim":
         # Convert datetime strings
         for field_name in [
-            "deadline", "planned_start_date", "started_at", "completed_at",
-            "started_at_override", "completed_at_override", "created_at", "updated_at"
+            "deadline",
+            "planned_start_date",
+            "started_at",
+            "completed_at",
+            "started_at_override",
+            "completed_at_override",
+            "created_at",
+            "updated_at",
         ]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
@@ -1617,34 +1632,40 @@ class StorySlim:
     updated_at: Optional[datetime] = None
     moved_at: Optional[datetime] = None
     external_id: Optional[str] = None
-    label_ids: List[int] = field(default_factory=list)
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    task_ids: List[int] = field(default_factory=list)
-    file_ids: List[int] = field(default_factory=list)
-    linked_file_ids: List[int] = field(default_factory=list)
-    comment_ids: List[int] = field(default_factory=list)
-    previous_iteration_ids: List[int] = field(default_factory=list)
-    sub_task_story_ids: List[int] = field(default_factory=list)
-    external_links: List[str] = field(default_factory=list)
-    labels: List[Dict[str, Any]] = field(default_factory=list)
-    story_links: List[Dict[str, Any]] = field(default_factory=list)
-    custom_fields: List[Dict[str, Any]] = field(default_factory=list)
-    stats: Optional[Dict[str, Any]] = None
+    label_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    task_ids: list[int] = field(default_factory=list)
+    file_ids: list[int] = field(default_factory=list)
+    linked_file_ids: list[int] = field(default_factory=list)
+    comment_ids: list[int] = field(default_factory=list)
+    previous_iteration_ids: list[int] = field(default_factory=list)
+    sub_task_story_ids: list[int] = field(default_factory=list)
+    external_links: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    story_links: list[dict[str, Any]] = field(default_factory=list)
+    custom_fields: list[dict[str, Any]] = field(default_factory=list)
+    stats: Optional[dict[str, Any]] = None
     num_tasks_completed: Optional[int] = None
     lead_time: Optional[int] = None
     cycle_time: Optional[int] = None
     formatted_vcs_branch_name: Optional[str] = None
-    mention_ids: List[str] = field(default_factory=list)
-    member_mention_ids: List[str] = field(default_factory=list)
-    group_mention_ids: List[str] = field(default_factory=list)
+    mention_ids: list[str] = field(default_factory=list)
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StorySlim":
+    def from_json(cls, data: dict[str, Any]) -> "StorySlim":
         # Convert datetime strings
         for field_name in [
-            "deadline", "started_at", "completed_at", "started_at_override",
-            "completed_at_override", "created_at", "updated_at", "moved_at"
+            "deadline",
+            "started_at",
+            "completed_at",
+            "started_at_override",
+            "completed_at_override",
+            "created_at",
+            "updated_at",
+            "moved_at",
         ]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
@@ -1667,18 +1688,18 @@ class IterationSlim:
     end_date: Optional[datetime] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    label_ids: List[int] = field(default_factory=list)
-    follower_ids: List[str] = field(default_factory=list)
-    group_ids: List[str] = field(default_factory=list)
-    labels: List[Dict[str, Any]] = field(default_factory=list)
-    associated_groups: List[Dict[str, Any]] = field(default_factory=list)
-    stats: Optional[Dict[str, Any]] = None
-    mention_ids: List[str] = field(default_factory=list)
-    member_mention_ids: List[str] = field(default_factory=list)
-    group_mention_ids: List[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    group_ids: list[str] = field(default_factory=list)
+    labels: list[dict[str, Any]] = field(default_factory=list)
+    associated_groups: list[dict[str, Any]] = field(default_factory=list)
+    stats: Optional[dict[str, Any]] = None
+    mention_ids: list[str] = field(default_factory=list)
+    member_mention_ids: list[str] = field(default_factory=list)
+    group_mention_ids: list[str] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "IterationSlim":
+    def from_json(cls, data: dict[str, Any]) -> "IterationSlim":
         # Convert datetime strings
         for field_name in ["start_date", "end_date", "created_at", "updated_at"]:
             if field_name in data and isinstance(data[field_name], str):
@@ -1691,6 +1712,7 @@ class IterationSlim:
 # ============================================================================
 # Search Results
 # ============================================================================
+
 
 @dataclass
 class EpicSearchResult:
@@ -1709,15 +1731,21 @@ class EpicSearchResult:
     state: Optional[str] = None
     epic_state_id: Optional[int] = None
     milestone_id: Optional[int] = None
-    objective_ids: List[int] = field(default_factory=list)
-    project_ids: List[int] = field(default_factory=list)
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    label_ids: List[int] = field(default_factory=list)
+    objective_ids: list[int] = field(default_factory=list)
+    project_ids: list[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "EpicSearchResult":
-        for field_name in ["created_at", "updated_at", "completed_at", "started_at", "deadline"]:
+    def from_json(cls, data: dict[str, Any]) -> "EpicSearchResult":
+        for field_name in [
+            "created_at",
+            "updated_at",
+            "completed_at",
+            "started_at",
+            "deadline",
+        ]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
                     data[field_name].replace("Z", "+00:00")
@@ -1745,13 +1773,19 @@ class StorySearchResult:
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
     estimate: Optional[int] = None
-    follower_ids: List[str] = field(default_factory=list)
-    owner_ids: List[str] = field(default_factory=list)
-    label_ids: List[int] = field(default_factory=list)
+    follower_ids: list[str] = field(default_factory=list)
+    owner_ids: list[str] = field(default_factory=list)
+    label_ids: list[int] = field(default_factory=list)
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StorySearchResult":
-        for field_name in ["created_at", "updated_at", "completed_at", "started_at", "deadline"]:
+    def from_json(cls, data: dict[str, Any]) -> "StorySearchResult":
+        for field_name in [
+            "created_at",
+            "updated_at",
+            "completed_at",
+            "started_at",
+            "deadline",
+        ]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
                     data[field_name].replace("Z", "+00:00")
@@ -1764,11 +1798,11 @@ class StorySearchResults:
     """The results of a Story search query."""
 
     total: int
-    data: List[StorySearchResult]
+    data: list[StorySearchResult]
     next: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StorySearchResults":
+    def from_json(cls, data: dict[str, Any]) -> "StorySearchResults":
         if "data" in data:
             data["data"] = [StorySearchResult.from_json(x) for x in data["data"]]
         return cls(**data)
@@ -1779,11 +1813,11 @@ class EpicSearchResults:
     """The results of an Epic search query."""
 
     total: int
-    data: List[EpicSearchResult]
+    data: list[EpicSearchResult]
     next: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "EpicSearchResults":
+    def from_json(cls, data: dict[str, Any]) -> "EpicSearchResults":
         if "data" in data:
             data["data"] = [EpicSearchResult.from_json(x) for x in data["data"]]
         return cls(**data)
@@ -1794,11 +1828,11 @@ class IterationSearchResults:
     """The results of an Iteration search query."""
 
     total: int
-    data: List[IterationSlim]
+    data: list[IterationSlim]
     next: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "IterationSearchResults":
+    def from_json(cls, data: dict[str, Any]) -> "IterationSearchResults":
         if "data" in data:
             data["data"] = [IterationSlim.from_json(x) for x in data["data"]]
         return cls(**data)
@@ -1809,11 +1843,11 @@ class ObjectiveSearchResults:
     """The results of an Objective (Milestone) search query."""
 
     total: int
-    data: List[Objective]
+    data: list[Objective]
     next: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "ObjectiveSearchResults":
+    def from_json(cls, data: dict[str, Any]) -> "ObjectiveSearchResults":
         if "data" in data:
             data["data"] = [Objective.from_json(x) for x in data["data"]]
         return cls(**data)
@@ -1824,11 +1858,11 @@ class DocumentSearchResults:
     """The results of a Document search query."""
 
     total: int
-    data: List[DocSlim]
+    data: list[DocSlim]
     next: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "DocumentSearchResults":
+    def from_json(cls, data: dict[str, Any]) -> "DocumentSearchResults":
         if "data" in data:
             data["data"] = [DocSlim.from_json(x) for x in data["data"]]
         return cls(**data)
@@ -1844,7 +1878,7 @@ class SearchResults:
     milestones: Optional[ObjectiveSearchResults] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "SearchResults":
+    def from_json(cls, data: dict[str, Any]) -> "SearchResults":
         if "epics" in data and data["epics"]:
             data["epics"] = EpicSearchResults.from_json(data["epics"])
         if "stories" in data and data["stories"]:
@@ -1860,6 +1894,7 @@ class SearchResults:
 # Story History
 # ============================================================================
 
+
 @dataclass
 class StoryHistory:
     """Historical changes to a Story."""
@@ -1871,12 +1906,12 @@ class StoryHistory:
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     changed_at: Optional[datetime] = None
-    actions: List[Dict[str, Any]] = field(default_factory=list)
+    actions: list[dict[str, Any]] = field(default_factory=list)
     external_id: Optional[str] = None
     version: Optional[str] = None
     subject_type: Optional[str] = None
     subject_id: Optional[int] = None
-    changes: Optional[Dict[str, Any]] = None
+    changes: Optional[dict[str, Any]] = None
     name: Optional[str] = None
     description: Optional[str] = None
     story_type: Optional[str] = None
@@ -1892,32 +1927,39 @@ class StoryHistory:
     project_id: Optional[int] = None
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
-    label_ids: Optional[List[int]] = None
-    owner_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
+    label_ids: Optional[list[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
     group_id: Optional[str] = None
-    group_ids: Optional[List[str]] = None
+    group_ids: Optional[list[str]] = None
     blocked: Optional[bool] = None
     blocker: Optional[bool] = None
-    branch_ids: Optional[List[int]] = None
-    commit_ids: Optional[List[int]] = None
-    pull_request_ids: Optional[List[int]] = None
-    file_ids: Optional[List[int]] = None
-    linked_file_ids: Optional[List[int]] = None
+    branch_ids: Optional[list[int]] = None
+    commit_ids: Optional[list[int]] = None
+    pull_request_ids: Optional[list[int]] = None
+    file_ids: Optional[list[int]] = None
+    linked_file_ids: Optional[list[int]] = None
     app_url: Optional[str] = None
-    mention_ids: Optional[List[str]] = None
-    member_mention_ids: Optional[List[str]] = None
-    group_mention_ids: Optional[List[str]] = None
+    mention_ids: Optional[list[str]] = None
+    member_mention_ids: Optional[list[str]] = None
+    group_mention_ids: Optional[list[str]] = None
     primary_id: Optional[int] = None
     references_id: Optional[int] = None
-    references: Optional[List[Dict[str, Any]]] = None
+    references: Optional[list[dict[str, Any]]] = None
     revert: Optional[bool] = None
     actor_name: Optional[str] = None
     actor_id: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "StoryHistory":
-        for field_name in ["created_at", "updated_at", "changed_at", "started_at", "completed_at", "deadline"]:
+    def from_json(cls, data: dict[str, Any]) -> "StoryHistory":
+        for field_name in [
+            "created_at",
+            "updated_at",
+            "changed_at",
+            "started_at",
+            "completed_at",
+            "deadline",
+        ]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
                     data[field_name].replace("Z", "+00:00")
@@ -1929,26 +1971,27 @@ class StoryHistory:
 # Bulk Operations
 # ============================================================================
 
+
 @dataclass
 class CreateStoriesInput:
     """Request parameters for creating multiple stories."""
 
-    stories: List[CreateStoryParams]
+    stories: list[CreateStoryParams]
 
 
 @dataclass
 class UpdateStoriesInput:
     """Request parameters for updating multiple stories."""
 
-    story_ids: List[int]
+    story_ids: list[int]
     workflow_state_id: Optional[int] = None
     project_id: Optional[int] = None
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
     group_id: Optional[str] = None
-    owner_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
     archived: Optional[bool] = None
     story_type: Optional[str] = None
     estimate: Optional[int] = None
@@ -1959,12 +2002,13 @@ class UpdateStoriesInput:
 class DeleteStoriesInput:
     """Request parameters for deleting multiple stories."""
 
-    story_ids: List[int]
+    story_ids: list[int]
 
 
 # ============================================================================
 # Story From Template
 # ============================================================================
+
 
 @dataclass
 class CreateStoryFromTemplateInput:
@@ -1978,9 +2022,9 @@ class CreateStoryFromTemplateInput:
     epic_id: Optional[int] = None
     iteration_id: Optional[int] = None
     group_id: Optional[str] = None
-    owner_ids: Optional[List[str]] = None
-    follower_ids: Optional[List[str]] = None
-    label_ids: Optional[List[int]] = None
+    owner_ids: Optional[list[str]] = None
+    follower_ids: Optional[list[str]] = None
+    label_ids: Optional[list[int]] = None
     estimate: Optional[int] = None
     deadline: Optional[datetime] = None
     external_id: Optional[str] = None
@@ -1991,6 +2035,7 @@ class CreateStoryFromTemplateInput:
 # ============================================================================
 # Reactions
 # ============================================================================
+
 
 @dataclass
 class CreateReactionInput:
@@ -2010,6 +2055,7 @@ class DeleteReactionInput:
 # Generic Integration (Webhook)
 # ============================================================================
 
+
 @dataclass
 class GenericIntegration:
     """A generic integration (webhook)."""
@@ -2022,7 +2068,7 @@ class GenericIntegration:
     updated_at: Optional[datetime] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "GenericIntegration":
+    def from_json(cls, data: dict[str, Any]) -> "GenericIntegration":
         for field_name in ["created_at", "updated_at"]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
@@ -2043,6 +2089,7 @@ class CreateGenericIntegrationInput:
 # Query Stories (Advanced Search)
 # ============================================================================
 
+
 @dataclass
 class QueryStoriesInput:
     """Request parameters for querying stories via POST."""
@@ -2056,6 +2103,7 @@ class QueryStoriesInput:
 # ============================================================================
 # UploadedFile (for file uploads)
 # ============================================================================
+
 
 @dataclass
 class UploadedFile:
@@ -2073,11 +2121,11 @@ class UploadedFile:
     uploader_id: Optional[str] = None
     description: Optional[str] = None
     external_id: Optional[str] = None
-    story_ids: List[int] = field(default_factory=list)
+    story_ids: list[int] = field(default_factory=list)
     thumbnail_url: Optional[str] = None
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "UploadedFile":
+    def from_json(cls, data: dict[str, Any]) -> "UploadedFile":
         for field_name in ["created_at", "updated_at"]:
             if field_name in data and isinstance(data[field_name], str):
                 data[field_name] = datetime.fromisoformat(
@@ -2099,6 +2147,7 @@ class UpdateFileInput:
 # LabelSlim
 # ============================================================================
 
+
 @dataclass
 class LabelSlim:
     """A lightweight representation of a Label."""
@@ -2112,5 +2161,5 @@ class LabelSlim:
     archived: bool = False
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> "LabelSlim":
+    def from_json(cls, data: dict[str, Any]) -> "LabelSlim":
         return cls(**data)

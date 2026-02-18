@@ -33,18 +33,12 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pipenv
 
-      - name: Cache pipenv virtualenv
-        uses: actions/cache@v4
-        id: cache-pipenv
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pipenv-${{ hashFiles('**/Pipfile') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pipenv-
-
       - name: Install dependencies
         run: |
-          pipenv install --dev --python ${{ matrix.python-version }}
+          pipenv install --dev
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
+          PIPENV_IGNORE_VIRTUALENVS: 1
 
       - name: Run tests
         run: |

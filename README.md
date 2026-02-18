@@ -2,6 +2,16 @@
 
 A python REST API Client for the v3 of the Shortcut API.
 
+## Copyright
+
+Copyright (c) 2025 Ivan Willig
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Disclaimer
+
+**This project is NOT sponsored, endorsed, or officially supported by Shortcut Software, Inc.** This is an independent, third-party open source library created by Ivan Willig. The "Shortcut" name and logo are trademarks of Shortcut Software, Inc.
+
 ## Installation
 
 You can install `useshortcut` using pip:

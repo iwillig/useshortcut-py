@@ -6,11 +6,15 @@ A python REST API Client for the v3 of the Shortcut API.
 
 Copyright (c) 2025 Ivan Willig
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file
+for details.
 
 ## Disclaimer
 
-**This project is NOT sponsored, endorsed, or officially supported by Shortcut Software, Inc.** This is an independent, third-party open source library created by Ivan Willig. The "Shortcut" name and logo are trademarks of Shortcut Software, Inc.
+**This project is NOT sponsored, endorsed, or officially supported by
+Shortcut Software Company** This is an independent, third-party open
+source library created by Ivan Willig. The "Shortcut" name and logo
+are trademarks of Shortcut Software Company.
 
 ## Installation
 
@@ -53,22 +57,26 @@ for story in stories.data:
 ### Setting up the development environment
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/your-username/useshortcut-py.git
 cd useshortcut-py
 ```
 
 2. Install pipenv if you haven't already:
+
 ```bash
 pip install pipenv
 ```
 
 3. Install development dependencies:
+
 ```bash
 pipenv install --dev
 ```
 
 4. Activate the virtual environment:
+
 ```bash
 pipenv shell
 ```
@@ -78,17 +86,19 @@ pipenv shell
 There are several ways to run the tests:
 
 Using invoke:
+
 ```bash
 pipenv run invoke test
 ```
 
-
 Using pipenv directly:
+
 ```bash
 pipenv run pytest
 ```
 
 To run tests with coverage:
+
 ```bash
 pipenv run pytest --cov=useshortcut
 ```
@@ -100,6 +110,7 @@ You'll need to set up the following environment variable for development:
 - `SHORTCUT_API_TOKEN`: Your Shortcut API token
 
 You can create a `.env` file in the project root (it will be ignored by git):
+
 ```bash
 SHORTCUT_API_TOKEN=your_api_token_here
 ```
